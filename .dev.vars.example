@@ -8,5 +8,6 @@ RESEND_API_KEY=re_your_key_here
 # Resend account is registered with. The fallback sender cannot deliver anywhere else.
 DEMO_NOTIFY_EMAIL=you@example.com
 
-# Leave commented until the domain is verified in Resend.
-# RESEND_FROM_EMAIL=ClassMap Demo <demo@classmap.in>
+# Must be an address on a domain verified in Resend. Replies go to the enquirer
+# via reply_to, so this address does not need to be a real mailbox.
+RESEND_FROM_EMAIL=ClassMap <noreply@classmap.in>
