@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
@@ -6,11 +7,43 @@ import { Resend } from "resend";
 const app = express();
 const PORT = Number(process.env.PORT) || 4000;
 
+// Required for req.ip to reflect the real client when running behind a
+// reverse proxy (Nginx, Render, Railway, Cloudflare).
+app.set("trust proxy", 1);
+
 app.use(express.json());
+
+// Simple in-memory rate limit for the public email endpoint, so it cannot be
+// used to spam the inbox. Resets on restart, which is fine for a single node.
+const DEMO_RATE_WINDOW_MS = 60 * 60 * 1000;
+const DEMO_RATE_MAX = 5;
+const demoRequestLog = new Map<string, number[]>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const recent = (demoRequestLog.get(ip) || []).filter(
+    (t) => now - t < DEMO_RATE_WINDOW_MS
+  );
+
+  if (recent.length >= DEMO_RATE_MAX) {
+    demoRequestLog.set(ip, recent);
+    return true;
+  }
+
+  recent.push(now);
+  demoRequestLog.set(ip, recent);
+  return false;
+}
 
 // API route to send demo request emails using Resend
 app.post("/api/book-demo", async (req, res) => {
   try {
+    if (isRateLimited(req.ip || "unknown")) {
+      return res
+        .status(429)
+        .json({ error: "Too many requests. Please try again later." });
+    }
+
     const { institutionName, type, contactName, phone, email, board } = req.body;
 
     if (!institutionName || !contactName || !phone || !email) {
@@ -66,8 +99,11 @@ app.post("/api/book-demo", async (req, res) => {
     `;
 
     const data = await resend.emails.send({
-      from: "ClassMap Demo <onboarding@resend.dev>",
-      to: ["info@classmap.in"],
+      // onboarding@resend.dev is Resend's test sender and only delivers to the
+      // account owner. Set RESEND_FROM_EMAIL to an address on a domain verified
+      // in Resend before going live.
+      from: process.env.RESEND_FROM_EMAIL || "ClassMap Demo <onboarding@resend.dev>",
+      to: [process.env.DEMO_NOTIFY_EMAIL || "info@classmap.in"],
       subject: emailSubject,
       html: htmlContent,
       replyTo: email,
@@ -82,14 +118,20 @@ app.post("/api/book-demo", async (req, res) => {
 });
 
 async function startServer() {
-  if (process.env.NODE_ENV !== "production") {
+  const isProduction = process.env.NODE_ENV === "production";
+
+  if (!isProduction) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), "dist");
+    // Resolved relative to the bundle (build/server.cjs), not the working
+    // directory, so the server works when started from anywhere.
+    const distPath = process.env.DIST_PATH
+      ? path.resolve(process.env.DIST_PATH)
+      : path.resolve(__dirname, "..", "dist");
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
       res.sendFile(path.join(distPath, "index.html"));
@@ -97,7 +139,12 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://0.0.0.0:${PORT}`);
+    const mode = isProduction ? "production (serving dist/)" : "development (Vite middleware)";
+    console.log(`Server running on http://0.0.0.0:${PORT} in ${mode}`);
+
+    if (!process.env.RESEND_API_KEY) {
+      console.warn("Warning: RESEND_API_KEY is not set — /api/book-demo will return 500.");
+    }
   });
 }
 
