@@ -4,8 +4,9 @@
        keeps its own colour against dark browser chrome instead of disappearing. -->
   <rect width="512" height="512" rx="114" fill="#FFFFFF"/>
   <!-- The chart mark from the ClassMap logo, scaled from its native 91x86
-       bounds to a centred, padded box. -->
-  <g transform="translate(38.2 43.6) scale(3.6)" fill="#FF6321">
+       bounds to a centred box. The scale factor sets how much of the tile the
+       mark fills; 4.2 leaves roughly a 13% margin. -->
+  <g transform="translate(1.9 8.2) scale(4.2)" fill="#FF6321">
     <rect x="15" y="98" width="110" height="4" rx="2"/>
     <rect x="25" y="68" width="12" height="26" rx="2"/>
     <rect x="48" y="48" width="12" height="46" rx="2"/>
