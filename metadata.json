@@ -1,0 +1,6 @@
+{
+  "name": "ClassMap — Learning Gap Intelligence Platform",
+  "description": "ClassMap goes beyond report cards to reveal WHY students struggle through handwritten assessment evaluation, concept-level gap analysis, and learning graph intelligence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
