@@ -1,0 +1,14 @@
+{
+  "name": "ClassMap",
+  "short_name": "ClassMap",
+  "description": "Learning gap intelligence for schools and coaching institutes across India.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FDFCFB",
+  "theme_color": "#FF6321",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

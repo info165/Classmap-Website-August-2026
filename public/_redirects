@@ -1,0 +1,5 @@
+# SPA fallback. /teachers, /students and /admin are client-side routes pushed by
+# App.tsx, not files on disk, so a direct visit or a refresh would 404 on
+# Cloudflare Pages without this. Functions under functions/ still take
+# precedence, so /api/book-demo is unaffected.
+/*    /index.html   200
