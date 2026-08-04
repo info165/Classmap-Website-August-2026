@@ -44,7 +44,20 @@ app.post("/api/book-demo", async (req, res) => {
         .json({ error: "Too many requests. Please try again later." });
     }
 
-    const { institutionName, type, contactName, phone, email, board } = req.body;
+    // Submitted text goes into an HTML email, so it has to be escaped.
+    // Mirrors functions/api/book-demo.ts, which is what runs in production.
+    const esc = (value: unknown) =>
+      typeof value === "string"
+        ? value
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;")
+        : "";
+
+    const { institutionName, contactName, phone, email, board } = req.body ?? {};
+    const type = req.body?.type || "School/Coaching";
 
     if (!institutionName || !contactName || !phone || !email) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -59,7 +72,7 @@ app.post("/api/book-demo", async (req, res) => {
 
     const resend = new Resend(apiKey);
 
-    const emailSubject = `New Demo Request: ${institutionName} (${type || 'School/Coaching'})`;
+    const emailSubject = `New Demo Request: ${institutionName} (${type})`;
     const htmlContent = `
       <div style="font-family: Arial, sans-serif; padding: 24px; color: #1a1a1a; max-width: 600px; border: 1px solid #eae7de; border-radius: 12px; background-color: #faf9f6;">
         <div style="margin-bottom: 20px; border-bottom: 2px solid #FF6321; padding-bottom: 12px;">
@@ -69,27 +82,27 @@ app.post("/api/book-demo", async (req, res) => {
         <table style="width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px;">
           <tr style="border-bottom: 1px solid #eee;">
             <td style="padding: 10px 0; font-weight: bold; color: #555; width: 150px;">Institution Name:</td>
-            <td style="padding: 10px 0; color: #111; font-weight: 600;">${institutionName}</td>
+            <td style="padding: 10px 0; color: #111; font-weight: 600;">${esc(institutionName)}</td>
           </tr>
           <tr style="border-bottom: 1px solid #eee;">
             <td style="padding: 10px 0; font-weight: bold; color: #555;">Type:</td>
-            <td style="padding: 10px 0; color: #111;">${type}</td>
+            <td style="padding: 10px 0; color: #111;">${esc(type)}</td>
           </tr>
           <tr style="border-bottom: 1px solid #eee;">
             <td style="padding: 10px 0; font-weight: bold; color: #555;">Contact Person:</td>
-            <td style="padding: 10px 0; color: #111; font-weight: 600;">${contactName}</td>
+            <td style="padding: 10px 0; color: #111; font-weight: 600;">${esc(contactName)}</td>
           </tr>
           <tr style="border-bottom: 1px solid #eee;">
             <td style="padding: 10px 0; font-weight: bold; color: #555;">Phone Number:</td>
-            <td style="padding: 10px 0; color: #111;"><a href="tel:${phone}" style="color: #FF6321; text-decoration: none;">${phone}</a></td>
+            <td style="padding: 10px 0; color: #111;"><a href="tel:${esc(String(phone).replace(/[^\d+]/g, ""))}" style="color: #FF6321; text-decoration: none;">${esc(phone)}</a></td>
           </tr>
           <tr style="border-bottom: 1px solid #eee;">
             <td style="padding: 10px 0; font-weight: bold; color: #555;">Email Address:</td>
-            <td style="padding: 10px 0; color: #111;"><a href="mailto:${email}" style="color: #FF6321; text-decoration: none;">${email}</a></td>
+            <td style="padding: 10px 0; color: #111;"><a href="mailto:${esc(email)}" style="color: #FF6321; text-decoration: none;">${esc(email)}</a></td>
           </tr>
           <tr>
             <td style="padding: 10px 0; font-weight: bold; color: #555;">Board / Curriculum:</td>
-            <td style="padding: 10px 0; color: #111;">${board}</td>
+            <td style="padding: 10px 0; color: #111;">${esc(board)}</td>
           </tr>
         </table>
         <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #eee; font-size: 12px; color: #888; text-align: center;">

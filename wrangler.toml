@@ -1,0 +1,10 @@
+# Cloudflare Pages project config. Committing this means the build output
+# directory and compatibility date come from the repo rather than being typed
+# into the dashboard, so a fresh deploy can't get them wrong.
+#
+# Secrets are NOT here — RESEND_API_KEY, DEMO_NOTIFY_EMAIL and RESEND_FROM_EMAIL
+# are set in Pages → Settings → Environment variables, so they never enter the repo.
+
+name = "classmap-website-2026"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-08-04"

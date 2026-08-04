@@ -1,0 +1,12 @@
+# Copy to .dev.vars for local testing of the Pages Function with `npm run preview`.
+# wrangler reads THIS file for Pages Functions — not .env.
+# .dev.vars is gitignored because it holds a real API key.
+
+RESEND_API_KEY=re_your_key_here
+
+# Until classmap.in is verified in Resend, this MUST be the email address your
+# Resend account is registered with. The fallback sender cannot deliver anywhere else.
+DEMO_NOTIFY_EMAIL=you@example.com
+
+# Leave commented until the domain is verified in Resend.
+# RESEND_FROM_EMAIL=ClassMap Demo <demo@classmap.in>

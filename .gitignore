@@ -7,3 +7,8 @@ coverage/
 .env*
 !.env.example
 .claude/settings.local.json
+
+# wrangler local secrets — holds a real Resend API key
+.dev.vars
+# wrangler local dev state
+.wrangler/
