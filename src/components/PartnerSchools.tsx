@@ -37,37 +37,51 @@ export const PartnerSchools: React.FC = () => {
     }
   ];
 
-  // Real Partner Schools & Coaching Institutes
+  // Real Partner Schools & Coaching Institutes.
+  // Logos come from public/logos/, same treatment as the crests above.
+  // `initials` is the fallback for any school whose logo we do not hold yet.
   const partnerInstitutions = [
     {
       name: 'Siddhartha Public School',
       subtitle: 'Hyderabad, Telangana',
-      badge: 'CBSE Affiliated'
+      badge: 'CBSE Affiliated',
+      initials: 'SPS',
+      logo: '/logos/siddhartha.png'
     },
     {
       name: 'DPS Howrah',
       subtitle: 'Delhi Public School, Howrah',
-      badge: 'CBSE'
+      badge: 'CBSE',
+      initials: 'DPS',
+      logo: '/logos/dps-howrah.png'
     },
     {
       name: 'B.D. Memorial International',
       subtitle: 'Kolkata, West Bengal',
-      badge: 'CBSE / International'
+      badge: 'CBSE / International',
+      initials: 'BDM',
+      logo: '/logos/bdmi.png'
     },
     {
       name: 'The Newtown School',
       subtitle: 'Kolkata, West Bengal',
-      badge: 'IGCSE & CBSE'
+      badge: 'IGCSE & CBSE',
+      initials: 'TNS',
+      logo: '/logos/newtown.png'
     },
     {
       name: 'St. Thomas School',
       subtitle: 'New Delhi / Eastern Region',
-      badge: 'ICSE / CBSE'
+      badge: 'ICSE / CBSE',
+      initials: 'STS',
+      logo: '/logos/st-thomas.png'
     },
     {
       name: 'Khaitan Public School',
       subtitle: 'NCR / Ghaziabad',
-      badge: 'CBSE'
+      badge: 'CBSE',
+      initials: 'KPS',
+      logo: '/logos/khaitan.png'
     }
   ];
 
@@ -94,11 +108,11 @@ export const PartnerSchools: React.FC = () => {
             {institutionalPartners.map((item) => (
               <div
                 key={item.id}
-                className="relative rounded-2xl p-5 bg-[#FDFBF7] border border-[#E8E5DA] hover:border-[#FF6321]/40 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-12px_rgba(26,26,26,0.18)] transition-all duration-300 flex flex-col group cursor-default"
+                className="relative rounded-2xl p-5 bg-[#FDFBF7] border border-[#E8E5DA] hover:border-[#FF6321]/40 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-12px_rgba(26,26,26,0.18)] transition-all duration-300 flex flex-col items-center text-center group cursor-default"
               >
                 {/* Logo plate. Pure white regardless of the card tint, so every
                     crest keeps its own colours at full contrast. */}
-                <div className="mb-4 flex h-28 items-center justify-center rounded-xl bg-white ring-1 ring-inset ring-[#EFEBE1]">
+                <div className="mb-4 w-full flex h-28 items-center justify-center rounded-xl bg-white ring-1 ring-inset ring-[#EFEBE1]">
                   <img
                     src={item.logo}
                     alt={`${item.fullName} logo`}
@@ -108,7 +122,7 @@ export const PartnerSchools: React.FC = () => {
                   />
                 </div>
 
-                <span className="self-start text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full bg-[#F3F0E6] text-[#555248] border border-[#E2DFD4]">
+                <span className="text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full bg-[#F3F0E6] text-[#555248] border border-[#E2DFD4]">
                   {item.tag}
                 </span>
 
@@ -145,25 +159,44 @@ export const PartnerSchools: React.FC = () => {
             {partnerInstitutions.map((inst, idx) => (
               <div
                 key={idx}
-                className="bg-white p-6 rounded-2xl border border-[#E2DFD4] shadow-2xs hover:shadow-md hover:border-[#FF6321]/40 transition-all flex flex-col justify-between group space-y-4"
+                className="bg-white p-6 rounded-2xl border border-[#E2DFD4] shadow-2xs hover:shadow-md hover:border-[#FF6321]/40 transition-all flex flex-col justify-between items-center text-center group space-y-4"
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1">
-                    <h3 className="text-base font-serif font-bold text-[#1A1A1A] group-hover:text-[#FF6321] transition-colors leading-snug">
-                      {inst.name}
-                    </h3>
-                    <p className="text-xs text-[#77746B] mt-1 font-medium">{inst.subtitle}</p>
-                  </div>
-                  <div className="w-7 h-7 rounded-lg bg-[#F4F2EC] text-[#66635B] flex items-center justify-center shrink-0 border border-[#E2DFD4]">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                  </div>
+                {/* Logo plate, matching the institutional cards above. Schools
+                    whose logo we do not hold fall back to a monogram so the row
+                    stays even rather than showing a gap. */}
+                <div className="w-full flex h-24 items-center justify-center rounded-xl bg-white ring-1 ring-inset ring-[#EFEBE1]">
+                  {inst.logo ? (
+                    <img
+                      src={inst.logo}
+                      alt={`${inst.name} logo`}
+                      loading="lazy"
+                      decoding="async"
+                      className="max-h-20 w-auto max-w-[75%] object-contain transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <span className="font-serif text-2xl font-bold tracking-widest text-[#C3BFB3]">
+                      {inst.initials}
+                    </span>
+                  )}
                 </div>
 
-                <div className="pt-2 border-t border-[#F4F2EC] flex items-center justify-between">
-                  <span className="inline-block px-3 py-1 rounded-md bg-[#F4F2EC] text-[10px] font-semibold text-[#555248] border border-[#E2DFD4]">
-                    {inst.badge}
-                  </span>
-                  <span className="text-[11px] font-bold text-[#FF6321] opacity-0 group-hover:opacity-100 transition-opacity">
+                <div>
+                  <h3 className="text-base font-serif font-bold text-[#1A1A1A] group-hover:text-[#FF6321] transition-colors leading-snug">
+                    {inst.name}
+                  </h3>
+                  <p className="text-xs text-[#77746B] mt-1 font-medium">{inst.subtitle}</p>
+                </div>
+
+                <div className="w-full pt-2 border-t border-[#F4F2EC]">
+                  <div className="flex items-center justify-center gap-2">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#66635B] shrink-0" />
+                    <span className="inline-block px-3 py-1 rounded-md bg-[#F4F2EC] text-[10px] font-semibold text-[#555248] border border-[#E2DFD4]">
+                      {inst.badge}
+                    </span>
+                  </div>
+                  {/* Height is reserved so the hover label does not shift the
+                      card when it fades in. */}
+                  <span className="mt-2 block h-4 text-[11px] font-bold text-[#FF6321] opacity-0 group-hover:opacity-100 transition-opacity">
                     ClassMap Partner &rarr;
                   </span>
                 </div>
