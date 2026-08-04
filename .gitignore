@@ -8,6 +8,9 @@ coverage/
 !.env.example
 .claude/settings.local.json
 
+# source art / screenshots kept for reference, not part of the build
+/ss
+
 # wrangler local secrets — holds a real Resend API key
 .dev.vars
 # wrangler local dev state

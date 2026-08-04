@@ -1,36 +1,42 @@
 import React from 'react';
-import { Building2, Landmark, GraduationCap, Award, Cpu, ShieldCheck } from 'lucide-react';
+import { Building2, ShieldCheck } from 'lucide-react';
+import dbseLogo from '../assets/images/partners/dbse.png';
+import iitMadrasLogo from '../assets/images/partners/iit-madras.png';
+import ministryLogo from '../assets/images/partners/ministry-of-education.png';
+import bodhanLogo from '../assets/images/partners/bodhan-ai.png';
 
 export const PartnerSchools: React.FC = () => {
-  // Institutional Partners
+  // Institutional Partners.
+  // Logos are trimmed to their artwork and exported at 240px tall, so every
+  // crest lands at the same optical size on the white plate below.
   const institutionalPartners = [
     {
       id: 'dbse',
       fullName: 'Delhi Board of School Education',
       subTitle: 'Govt. of NCT Delhi',
       tag: 'State Board Partner',
-      icon: Landmark
+      logo: dbseLogo
     },
     {
       id: 'iit-m',
       fullName: 'IIT Madras',
       subTitle: 'Academic & Research Partner',
       tag: 'Institute of Eminence',
-      icon: GraduationCap
+      logo: iitMadrasLogo
     },
     {
       id: 'moe',
       fullName: 'Ministry of Education',
       subTitle: 'Government of India',
       tag: 'National Alignment',
-      icon: Award
+      logo: ministryLogo
     },
     {
       id: 'bodhan',
       fullName: 'Bodhan AI',
       subTitle: 'Cognitive AI Research',
       tag: 'Learning Gap Intelligence',
-      icon: Cpu
+      logo: bodhanLogo
     }
   ];
 
@@ -88,33 +94,35 @@ export const PartnerSchools: React.FC = () => {
 
           {/* Clean Institutional Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {institutionalPartners.map((item) => {
-              const IconComp = item.icon;
-              return (
-                <div
-                  key={item.id}
-                  className="relative rounded-2xl p-6 bg-[#FDFBF7] border border-[#E8E5DA] hover:border-[#FF6321]/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between group cursor-default min-h-[140px]"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="w-9 h-9 rounded-xl bg-[#FFF0E6] text-[#FF6321] border border-[#FFD9C7] flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-                      <IconComp className="w-4 h-4" />
-                    </div>
-                    <span className="text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full bg-[#F3F0E6] text-[#555248] border border-[#E2DFD4]">
-                      {item.tag}
-                    </span>
-                  </div>
-
-                  <div>
-                    <h3 className="text-base font-serif font-bold text-[#1A1A1A] group-hover:text-[#FF6321] transition-colors leading-snug">
-                      {item.fullName}
-                    </h3>
-                    <p className="text-xs font-medium text-[#77746B] mt-1">
-                      {item.subTitle}
-                    </p>
-                  </div>
+            {institutionalPartners.map((item) => (
+              <div
+                key={item.id}
+                className="relative rounded-2xl p-5 bg-[#FDFBF7] border border-[#E8E5DA] hover:border-[#FF6321]/40 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-12px_rgba(26,26,26,0.18)] transition-all duration-300 flex flex-col group cursor-default"
+              >
+                {/* Logo plate. Pure white regardless of the card tint, so every
+                    crest keeps its own colours at full contrast. */}
+                <div className="mb-4 flex h-24 items-center justify-center rounded-xl bg-white ring-1 ring-inset ring-[#EFEBE1]">
+                  <img
+                    src={item.logo}
+                    alt={`${item.fullName} logo`}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-16 w-auto max-w-[80%] object-contain transition-transform duration-300 group-hover:scale-105"
+                  />
                 </div>
-              );
-            })}
+
+                <span className="self-start text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full bg-[#F3F0E6] text-[#555248] border border-[#E2DFD4]">
+                  {item.tag}
+                </span>
+
+                <h3 className="mt-3 text-base font-serif font-bold text-[#1A1A1A] group-hover:text-[#FF6321] transition-colors leading-snug">
+                  {item.fullName}
+                </h3>
+                <p className="text-xs font-medium text-[#77746B] mt-1">
+                  {item.subTitle}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
 
