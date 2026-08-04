@@ -98,13 +98,13 @@ export const PartnerSchools: React.FC = () => {
               >
                 {/* Logo plate. Pure white regardless of the card tint, so every
                     crest keeps its own colours at full contrast. */}
-                <div className="mb-4 flex h-24 items-center justify-center rounded-xl bg-white ring-1 ring-inset ring-[#EFEBE1]">
+                <div className="mb-4 flex h-28 items-center justify-center rounded-xl bg-white ring-1 ring-inset ring-[#EFEBE1]">
                   <img
                     src={item.logo}
                     alt={`${item.fullName} logo`}
                     loading="lazy"
                     decoding="async"
-                    className="h-16 w-auto max-w-[80%] object-contain transition-transform duration-300 group-hover:scale-105"
+                    className="h-20 w-auto max-w-[85%] object-contain transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
 
