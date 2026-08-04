@@ -1,42 +1,39 @@
-import React from 'react';
+﻿import React from 'react';
 import { Building2, ShieldCheck } from 'lucide-react';
-import dbseLogo from '../assets/images/partners/dbse.png';
-import iitMadrasLogo from '../assets/images/partners/iit-madras.png';
-import ministryLogo from '../assets/images/partners/ministry-of-education.png';
-import bodhanLogo from '../assets/images/partners/bodhan-ai.png';
 
 export const PartnerSchools: React.FC = () => {
   // Institutional Partners.
-  // Logos are trimmed to their artwork and exported at 240px tall, so every
-  // crest lands at the same optical size on the white plate below.
+  // Logos are served from public/logos/. They are trimmed to their artwork and
+  // exported at 240px tall, so every crest lands at the same optical size on the
+  // white plate below. Masters live in ss/, which is not committed.
   const institutionalPartners = [
     {
       id: 'dbse',
       fullName: 'Delhi Board of School Education',
       subTitle: 'Govt. of NCT Delhi',
       tag: 'State Board Partner',
-      logo: dbseLogo
+      logo: '/logos/dbse.png'
     },
     {
       id: 'iit-m',
       fullName: 'IIT Madras',
       subTitle: 'Academic & Research Partner',
       tag: 'Institute of Eminence',
-      logo: iitMadrasLogo
+      logo: '/logos/iit-madras.png'
     },
     {
       id: 'moe',
       fullName: 'Ministry of Education',
       subTitle: 'Government of India',
       tag: 'National Alignment',
-      logo: ministryLogo
+      logo: '/logos/ministry-of-education.png'
     },
     {
       id: 'bodhan',
       fullName: 'Bodhan AI',
       subTitle: 'Cognitive AI Research',
       tag: 'Learning Gap Intelligence',
-      logo: bodhanLogo
+      logo: '/logos/bodhan-ai.png'
     }
   ];
 
