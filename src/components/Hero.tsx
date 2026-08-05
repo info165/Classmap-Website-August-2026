@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Sparkles, TrendingUp, Award, CheckCircle2, Star, Flame, Calendar, FileText, Check, AlertTriangle, ShieldCheck, Building2 } from 'lucide-react';
+import { ArrowRight, Sparkles, TrendingUp, Award, CheckCircle2, Star, Flame, FileText, Check, AlertTriangle, ShieldCheck, Building2 } from 'lucide-react';
 import handwrittenPaperImg from '../assets/images/handwritten_answer_sheet_1785252659162.jpg';
 
 interface HeroProps {
@@ -191,15 +191,6 @@ export const Hero: React.FC<HeroProps> = ({ onExploreEvaluator, onOpenAudit }) =
                   </div>
                 </div>
               </div>
-
-              {/* Floating CTA Pill bottom right */}
-              <button
-                onClick={onOpenAudit}
-                className="absolute -bottom-14 right-4 bg-[#FF6321] hover:bg-[#E05215] text-white px-5 py-3 rounded-full text-xs font-bold shadow-xl flex items-center gap-2 z-30 cursor-pointer transition-all hover:scale-105 hidden sm:flex"
-              >
-                <Calendar className="w-4 h-4" />
-                <span>Book a Free Demo</span>
-              </button>
 
             </div>
           </div>
