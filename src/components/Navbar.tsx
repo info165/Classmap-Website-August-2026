@@ -168,25 +168,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </div>
               )}
             </div>
-
-            {/* Book Free Demo Button */}
-            <button
-              onClick={onOpenAudit}
-              className="px-5 py-2 bg-[#FF6321] hover:bg-[#E05215] text-white rounded-full font-bold text-xs shadow-sm hover:shadow-md transition-all cursor-pointer"
-            >
-              Book Free Demo
-            </button>
           </div>
 
           {/* Mobile Actions Header (Compact & Flawless) */}
           <div className="flex lg:hidden items-center gap-2 shrink-0">
-            <button
-              onClick={onOpenAudit}
-              className="px-3 py-1.5 rounded-full text-xs font-bold text-white bg-[#FF6321] hover:bg-[#E05215] transition-colors cursor-pointer"
-            >
-              Book Demo
-            </button>
-
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-xl text-[#1A1A1A] hover:bg-[#EFECE6] transition-colors cursor-pointer"
