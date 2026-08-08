@@ -207,8 +207,8 @@ export const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({
               <div className="text-[11px] font-bold text-[#12151C]">Questions about data privacy?</div>
               <p className="text-[11px] text-[#666] leading-relaxed">
                 Contact our designated Data Protection Officer at{' '}
-                <a href="mailto:privacy@classmap.in" className="text-[#FF6321] font-bold underline">
-                  privacy@classmap.in
+                <a href="mailto:info@classmap.in" className="text-[#FF6321] font-bold underline">
+                  info@classmap.in
                 </a>
               </p>
               {onOpenAudit && (
@@ -521,10 +521,7 @@ export const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 text-xs text-stone-300">
                   <div className="space-y-1">
                     <span className="text-[#888] uppercase tracking-wider text-[10px] font-bold block">Grievance Email</span>
-                    <a href="mailto:privacy@classmap.in" className="text-[#FF6321] font-bold hover:underline block text-sm">
-                      privacy@classmap.in
-                    </a>
-                    <a href="mailto:info@classmap.in" className="text-stone-300 hover:underline block">
+                    <a href="mailto:info@classmap.in" className="text-[#FF6321] font-bold hover:underline block text-sm">
                       info@classmap.in
                     </a>
                   </div>
