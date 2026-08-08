@@ -289,9 +289,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {/* Contact Information Footer */}
             <div className="pt-2 border-t border-[#EAE7DE] flex items-center justify-between text-xs text-[#666] px-1">
-              <a href="tel:+919589587054" className="flex items-center gap-1.5 hover:text-[#FF6321] font-medium">
+              <a href="tel:+918981716969" className="flex items-center gap-1.5 hover:text-[#FF6321] font-medium">
                 <Phone className="w-3.5 h-3.5 text-[#FF6321]" />
-                <span>+91-9589587054</span>
+                <span>+91-8981716969</span>
               </a>
               <a href="mailto:info@classmap.in" className="flex items-center gap-1.5 hover:text-[#FF6321] font-medium">
                 <Mail className="w-3.5 h-3.5 text-[#FF6321]" />

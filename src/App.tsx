@@ -162,7 +162,7 @@ export default function App() {
 
       {/* Floating WhatsApp Quick Connect Button */}
       <a
-        href="https://wa.me/919589587054?text=Hi%20Classmap%20Team%2C%20I%20would%20like%20to%20learn%20more%20about%20Classmap."
+        href="https://wa.me/918981716969?text=Hi%20Classmap%20Team%2C%20I%20would%20like%20to%20learn%20more%20about%20Classmap."
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Connect on WhatsApp"

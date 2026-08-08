@@ -528,8 +528,8 @@ export const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({
 
                   <div className="space-y-1">
                     <span className="text-[#888] uppercase tracking-wider text-[10px] font-bold block">Helpline Phone</span>
-                    <a href="tel:+919589587054" className="text-white font-mono font-bold block">
-                      +91-9589587054
+                    <a href="tel:+918981716969" className="text-white font-mono font-bold block">
+                      +91-8981716969
                     </a>
                   </div>
 

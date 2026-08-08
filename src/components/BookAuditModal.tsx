@@ -157,7 +157,7 @@ export const BookAuditModal: React.FC<BookAuditModalProps> = ({ isOpen, onClose 
                     required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+91 95895 87054"
+                    placeholder="+91 89817 16969"
                     className="w-full px-4 py-2.5 rounded-full border border-[#D5D1C4] focus:outline-none focus:border-[#FF6321]"
                   />
                 </div>
@@ -241,11 +241,11 @@ export const BookAuditModal: React.FC<BookAuditModalProps> = ({ isOpen, onClose 
                 <span>Need Immediate Assistance?</span>
               </div>
               <p className="text-xs text-[#66635B] leading-normal">
-                You can reach our lead education specialist directly at <strong className="text-[#12151C]">9589587054</strong> or connect with us on WhatsApp for instant queries.
+                You can reach our lead education specialist directly at <strong className="text-[#12151C]">8981716969</strong> or connect with us on WhatsApp for instant queries.
               </p>
               <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
                 <a
-                  href={`https://wa.me/919589587054?text=${encodeURIComponent(`Hi Classmap Team, I just submitted a free demo request for ${institutionName || 'our institution'}.`)}`}
+                  href={`https://wa.me/918981716969?text=${encodeURIComponent(`Hi Classmap Team, I just submitted a free demo request for ${institutionName || 'our institution'}.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 py-3 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
@@ -255,11 +255,11 @@ export const BookAuditModal: React.FC<BookAuditModalProps> = ({ isOpen, onClose 
                 </a>
 
                 <a
-                  href="tel:9589587054"
+                  href="tel:8981716969"
                   className="flex-1 py-3 bg-[#12151C] hover:bg-[#2A2E3D] text-white rounded-full text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Phone className="w-3.5 h-3.5" />
-                  <span>Call 9589587054</span>
+                  <span>Call 8981716969</span>
                 </a>
               </div>
             </div>
