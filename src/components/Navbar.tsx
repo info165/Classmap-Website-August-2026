@@ -51,10 +51,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${
         scrolled
-          ? 'bg-[#FDFCFB]/95 backdrop-blur-md border-b border-[#F0EFEA] py-2.5 sm:py-3 shadow-xs'
-          : 'bg-[#FDFCFB] py-3 sm:py-4'
+          ? 'bg-white/85 backdrop-blur-xl border-[#E2DED2] py-2.5 shadow-[0_4px_20px_-8px_rgba(26,26,26,0.16)]'
+          : 'bg-white border-[#EDEAE1] py-3 shadow-[0_1px_3px_rgba(26,26,26,0.04)]'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -66,7 +66,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="group flex items-center focus:outline-none cursor-pointer shrink-0"
             aria-label="ClassMap Home"
           >
-            <Logo size="xl" showTaglineOnMobile={false} />
+            {/* Smaller than before so the logo-plus-tagline lockup still fits a
+                header-height bar rather than filling it. */}
+            <Logo size="md" showTaglineOnMobile={false} />
           </button>
 
           {/* Desktop Center Navigation Links */}

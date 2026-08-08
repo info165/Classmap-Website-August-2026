@@ -94,7 +94,7 @@ export const Logo: React.FC<LogoProps> = ({
         }}
       />
       {showTagline && (
-        <div className={`items-center gap-1.5 rounded-full font-bold tracking-tight mt-1 sm:mt-1.5 ${pillStyle} ${sizeClasses} ${taglineVisibilityClass} ${taglineClassName}`}>
+        <div className={`items-center gap-1.5 rounded-full font-bold tracking-tight mt-2 sm:mt-2.5 ${pillStyle} ${sizeClasses} ${taglineVisibilityClass} ${taglineClassName}`}>
           <Sparkles className="w-3 h-3 text-[#FF6321] shrink-0" />
           <span>Building India’s Learning Intelligence Infrastructure</span>
         </div>
