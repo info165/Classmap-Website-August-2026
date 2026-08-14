@@ -1,5 +1,6 @@
 ﻿import React from 'react';
 import { Building2, ShieldCheck } from 'lucide-react';
+import { VideoTestimonial } from './VideoTestimonial';
 
 export const PartnerSchools: React.FC = () => {
   // Institutional Partners.
@@ -203,6 +204,9 @@ export const PartnerSchools: React.FC = () => {
               </div>
             ))}
           </div>
+
+          {/* 3. VIDEO TESTIMONIAL FROM A PARTNER SCHOOL */}
+          <VideoTestimonial />
         </div>
 
       </div>

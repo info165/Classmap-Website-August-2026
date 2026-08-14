@@ -6,7 +6,7 @@ interface TargetUsersProps {
 }
 
 export const TargetUsers: React.FC<TargetUsersProps> = ({ onOpenAudit }) => {
-  const [activeUserRole, setActiveUserRole] = useState<'school' | 'teacher' | 'coordinator' | 'parent'>('school');
+  const [activeUserRole, setActiveUserRole] = useState<'school' | 'teacher' | 'student' | 'parent'>('school');
 
   const roles = [
     {
@@ -24,7 +24,7 @@ export const TargetUsers: React.FC<TargetUsersProps> = ({ onOpenAudit }) => {
     },
     {
       id: 'teacher',
-      label: 'Subject Teachers',
+      label: 'Teachers',
       icon: UserCheck,
       tagline: 'Save 12+ Hours Every Week on Paper Correction',
       headline: 'Reclaim your evening hours while giving better feedback than ever before.',
@@ -36,21 +36,8 @@ export const TargetUsers: React.FC<TargetUsersProps> = ({ onOpenAudit }) => {
       ]
     },
     {
-      id: 'coordinator',
-      label: 'Academic Coordinators',
-      icon: GraduationCap,
-      tagline: 'Data-Driven Curriculum Alignment',
-      headline: 'Standardize teaching quality across sections and departments.',
-      points: [
-        'Compare section performance on specific syllabus learning outcomes.',
-        'Identify whether a drop in scores is due to curriculum pacing or concept difficulty.',
-        'Empower department heads with clear evidence during subject review meetings.',
-        'Track term-on-term learning retention over multi-year cohorts.'
-      ]
-    },
-    {
       id: 'parent',
-      label: 'Parents & Guardians',
+      label: 'Parents',
       icon: Heart,
       tagline: 'Constructive Parent-Teacher Discussions',
       headline: 'Understand your child’s true learning journey beyond anxiety-inducing marks.',
@@ -59,6 +46,19 @@ export const TargetUsers: React.FC<TargetUsersProps> = ({ onOpenAudit }) => {
         'Know precisely what 10-minute activity at home will resolve a learning roadblock.',
         'Eliminate guesswork and tuition fatigue with targeted remedial clarity.',
         'Watch your child build genuine academic self-confidence.'
+      ]
+    },
+    {
+      id: 'student',
+      label: 'Students',
+      icon: GraduationCap,
+      tagline: 'Practice That Targets Your Actual Gaps',
+      headline: 'See exactly where your understanding breaks, and what to do about it.',
+      points: [
+        'Understand why an answer lost marks, not just how many were lost.',
+        'Get practice built around your own misconceptions instead of generic question sets.',
+        'Track concept mastery improving unit by unit across the year.',
+        'Walk into exams knowing which topics are genuinely secure.'
       ]
     }
   ];
@@ -75,7 +75,9 @@ export const TargetUsers: React.FC<TargetUsersProps> = ({ onOpenAudit }) => {
             <span>Built for the Complete Ecosystem</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-light text-[#1A1A1A] tracking-tight">
+          {/* text-balance stops the heading dropping a single word onto its own
+              line, which is what made it read as unbalanced. */}
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-medium text-[#1A1A1A] tracking-tight text-balance">
             How ClassMap Serves Every Stakeholder
           </h2>
 
@@ -106,58 +108,41 @@ export const TargetUsers: React.FC<TargetUsersProps> = ({ onOpenAudit }) => {
           })}
         </div>
 
-        {/* Active Role Content Card */}
-        <div className="bg-white rounded-3xl border border-[#EEE] p-8 lg:p-12 shadow-xl animate-in fade-in duration-300">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-7 space-y-6">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#FF6321] bg-[#FFF0E6] px-3 py-1 rounded-full">
+        {/* Active Role Content Card. Flat with a hairline rim rather than the
+            old shadow-xl — a heavy resting shadow is the quickest way to make a
+            card look like a template. */}
+        <div className="bg-white rounded-3xl border border-[#E8E4DA] p-8 lg:p-12 shadow-[0_1px_3px_rgba(26,26,26,0.04)] animate-in fade-in duration-300">
+          <div className="grid grid-cols-1">
+            <div>
+              <span className="inline-block px-3 py-1.5 rounded-full bg-[#FFF0E6] text-[10px] font-bold uppercase tracking-[0.16em] text-[#C9541C]">
                 {currentRole.tagline}
               </span>
 
-              <h3 className="text-2xl sm:text-3xl font-serif font-light text-[#1A1A1A] leading-tight">
+              <h3 className="mt-5 text-2xl sm:text-[32px] font-serif font-light text-[#1A1A1A] leading-[1.25] tracking-tight text-balance">
                 {currentRole.headline}
               </h3>
 
-              <ul className="space-y-3.5 text-sm text-[#403E38]">
+              <ul className="mt-8 space-y-4">
                 {currentRole.points.map((point, idx) => (
-                  <li key={idx} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-[#FF6321] shrink-0 mt-0.5" />
+                  <li
+                    key={idx}
+                    className="flex items-start gap-3.5 text-[15px] leading-relaxed text-[#403E38]"
+                  >
+                    <CheckCircle2 className="mt-[3px] h-[18px] w-[18px] shrink-0 text-[#FF6321]" />
                     <span>{point}</span>
                   </li>
                 ))}
               </ul>
 
-              <div className="pt-4">
-                <button
-                  onClick={onOpenAudit}
-                  className="inline-flex items-center gap-2 bg-[#FF6321] hover:bg-[#E05215] text-white px-8 py-4 rounded-full text-xs font-bold tracking-wide transition-all shadow-md shadow-[#FF6321]/20 cursor-pointer"
-                >
-                  <span>Experience ClassMap for Your School</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              <button
+                onClick={onOpenAudit}
+                className="group mt-9 inline-flex items-center gap-2.5 rounded-full bg-[#FF6321] px-7 py-3.5 text-xs font-bold tracking-wide text-white shadow-[0_1px_2px_rgba(219,76,14,0.4),0_8px_20px_-8px_rgba(255,99,33,0.55),inset_0_1px_0_rgba(255,255,255,0.22)] transition-all duration-300 ease-out hover:-translate-y-px hover:bg-[#F0530F] cursor-pointer"
+              >
+                <span>Experience ClassMap for Your School</span>
+                <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+              </button>
             </div>
 
-            {/* Right Side Visual Accent Card */}
-            <div className="lg:col-span-5 bg-[#FCFCFB] p-6 rounded-3xl border border-[#E2DFD4] space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#FFF0E6] border border-[#FF6321]/20 flex items-center justify-center text-[#FF6321]">
-                  <currentRole.icon className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-sm font-bold text-[#1A1A1A]">{currentRole.label}</div>
-                  <div className="text-xs text-[#706E66]">Role Perspective</div>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-white border border-[#E0DDD3] text-xs text-[#555] italic font-serif leading-relaxed">
-                "ClassMap brought our faculty together. We no longer debate whether students are studying; we focus on closing the specific concept gap together."
-              </div>
-
-              <div className="text-[11px] font-bold text-[#FF6321] text-right font-mono">
-                CBSE / ICSE / IB Board Ready
-              </div>
-            </div>
           </div>
         </div>
       </div>

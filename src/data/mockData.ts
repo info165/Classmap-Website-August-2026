@@ -219,12 +219,6 @@ export interface DashboardViewTab {
 
 export const DASHBOARD_TABS: DashboardViewTab[] = [
   {
-    id: 'evaluator',
-    label: 'Handwritten Answer Evaluator',
-    role: 'Evaluator Engine',
-    subtitle: 'Uploads handwritten scripts, extracts subjective reasoning, flags concept gaps.'
-  },
-  {
     id: 'heatmap',
     label: 'Class Learning Heatmap',
     role: 'Classroom Overview',

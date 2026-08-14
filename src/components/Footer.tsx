@@ -8,35 +8,74 @@ interface FooterProps {
   onOpenWebsiteBilling?: () => void;
   onScrollToSection: (sectionId: string) => void;
   onOpenPrivacy?: () => void;
+  onOpenBlog?: () => void;
 }
+
+const PARTNER_SCHOOLS = [
+  'Siddhartha Public School',
+  'DPS Howrah',
+  'BDMI',
+  'The Newtown School',
+  'St. Thomas School',
+  'Khaitan Public School'
+];
+
+const INSTITUTIONAL_BODIES = [
+  'Delhi Board (DBSE)',
+  'IIT Madras',
+  'Ministry of Education',
+  'Bodhan AI'
+];
+
+/**
+ * One chip style for the whole ecosystem bar. The previous version gave each
+ * institutional body its own saturated colour — green, blue, orange, purple —
+ * which read as four unrelated tags rather than one roster. A single restrained
+ * surface with a brand accent dot ties the whole roster together instead.
+ */
+const EcosystemChip: React.FC<{ label: string }> = ({ label }) => (
+  <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.045] border border-white/[0.09] text-[11px] font-medium text-stone-300 transition-colors duration-200 hover:bg-white/[0.08] hover:border-white/[0.16] hover:text-white">
+    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#FF6321]" />
+    {label}
+  </span>
+);
 
 export const Footer: React.FC<FooterProps> = ({
   onOpenLogin,
   onOpenAudit,
   onOpenWebsiteBilling,
   onScrollToSection,
-  onOpenPrivacy
+  onOpenPrivacy,
+  onOpenBlog
 }) => {
   return (
     <footer className="bg-[#1A1A1A] text-white pt-16 pb-12 border-t border-[#333]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Partner Schools, Coaching Institutes & Government Ecosystem Badge Bar */}
-        <div className="pb-8 mb-8 border-b border-[#282828] space-y-3">
-          <div className="text-[10px] uppercase tracking-widest text-[#888] font-bold">
-            Trusted Partner Schools, Coaching Institutes & Government Ecosystem
-          </div>
-          <div className="flex flex-wrap items-center gap-2 text-xs text-[#AAA]">
-            <span className="px-2.5 py-1 rounded-md bg-[#252525] border border-[#333] text-white font-medium">Siddhartha Public School</span>
-            <span className="px-2.5 py-1 rounded-md bg-[#252525] border border-[#333] text-white font-medium">DPS Howrah</span>
-            <span className="px-2.5 py-1 rounded-md bg-[#252525] border border-[#333] text-white font-medium">BDMI</span>
-            <span className="px-2.5 py-1 rounded-md bg-[#252525] border border-[#333] text-white font-medium">The Newtown School</span>
-            <span className="px-2.5 py-1 rounded-md bg-[#252525] border border-[#333] text-white font-medium">St. Thomas School</span>
-            <span className="px-2.5 py-1 rounded-md bg-[#252525] border border-[#333] text-white font-medium">Khaitan Public School</span>
-            <span className="px-2.5 py-1 rounded-md bg-[#1E3A2B] border border-emerald-800 text-emerald-300 font-bold">Delhi Board (DBSE)</span>
-            <span className="px-2.5 py-1 rounded-md bg-[#1E293B] border border-blue-800 text-blue-300 font-bold">IIT Madras</span>
-            <span className="px-2.5 py-1 rounded-md bg-[#3B1904] border border-orange-800 text-orange-300 font-bold">Ministry of Education</span>
-            <span className="px-2.5 py-1 rounded-md bg-[#2E1065] border border-purple-800 text-purple-300 font-bold">Bodhan AI</span>
+        {/* Partner Schools, Coaching Institutes & Government Ecosystem */}
+        <div className="pb-10 mb-10 border-b border-[#282828]">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-9 lg:gap-16">
+            <div className="space-y-3.5">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-[#6F6A5E] font-semibold">
+                Partner Schools &amp; Coaching Institutes
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {PARTNER_SCHOOLS.map((name) => (
+                  <EcosystemChip key={name} label={name} />
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3.5">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-[#6F6A5E] font-semibold">
+                Institutional Alignment
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {INSTITUTIONAL_BODIES.map((name) => (
+                  <EcosystemChip key={name} label={name} />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -47,7 +86,7 @@ export const Footer: React.FC<FooterProps> = ({
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               className="cursor-pointer inline-block"
             >
-              <Logo size="xl" variant="dark" showTaglineOnMobile={true} />
+              <Logo size="xl" />
             </div>
 
             <p className="text-sm text-[#AAA] max-w-md leading-relaxed font-normal">
@@ -94,6 +133,16 @@ export const Footer: React.FC<FooterProps> = ({
                   Enterprise Trust Architecture (DPDP)
                 </button>
               </li>
+              {onOpenBlog && (
+                <li>
+                  <button
+                    onClick={onOpenBlog}
+                    className="hover:text-white transition-colors cursor-pointer text-left"
+                  >
+                    Blog
+                  </button>
+                </li>
+              )}
               {onOpenPrivacy && (
                 <li>
                   <button

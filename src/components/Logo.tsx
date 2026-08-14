@@ -1,33 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { Sparkles } from 'lucide-react';
 import { firebaseConfig } from '../lib/firebase';
 import { getOrSeedStorageUrl } from '../lib/firebaseStorageSync';
-import defaultLogoImg from '../assets/images/logo-horizontal.svg';
+/** Mark plus wordmark only — no descriptor line. */
+import defaultLogoImg from '../assets/images/logo-original.png';
 
 interface LogoProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   imageUrl?: string;
-  showTagline?: boolean;
-  showTaglineOnMobile?: boolean;
-  variant?: 'light' | 'dark';
-  taglineClassName?: string;
 }
 
 export const Logo: React.FC<LogoProps> = ({
   className = '',
   size = 'md',
-  imageUrl,
-  showTagline = true,
-  showTaglineOnMobile = false,
-  variant = 'light',
-  taglineClassName = ''
+  imageUrl
 }) => {
+  // The wordmark is a wide 5.4:1 lockup, so height reads much larger than the
+  // number suggests — these sit deliberately below typical logo heights.
   const responsiveHeightClasses = {
-    sm: 'h-7 sm:h-8',
-    md: 'h-8 sm:h-10',
-    lg: 'h-9 sm:h-12 md:h-14',
-    xl: 'h-8 sm:h-11 md:h-14 lg:h-16'
+    sm: 'h-6 sm:h-7',
+    md: 'h-7 sm:h-8',
+    lg: 'h-8 sm:h-9 md:h-10',
+    xl: 'h-8 sm:h-9 md:h-10 lg:h-11'
   };
 
   const [displayUrl, setDisplayUrl] = useState<string>(imageUrl || defaultLogoImg);
@@ -69,18 +63,6 @@ export const Logo: React.FC<LogoProps> = ({
     };
   }, [imageUrl]);
 
-  const pillStyle = variant === 'dark'
-    ? 'bg-[#222736] border border-[#FF6321]/35 text-[#FF6321]'
-    : 'bg-[#FFF0E6] border border-[#FF6321]/25 text-[#FF6321]';
-
-  const sizeClasses = size === 'sm' || size === 'md'
-    ? 'px-2.5 py-0.5 text-[10px]'
-    : 'px-3 py-1 text-[11px]';
-
-  const taglineVisibilityClass = showTaglineOnMobile
-    ? 'inline-flex'
-    : 'hidden md:inline-flex';
-
   return (
     <div className={`inline-flex flex-col items-start shrink-0 select-none ${className}`}>
       <img
@@ -93,12 +75,6 @@ export const Logo: React.FC<LogoProps> = ({
           }
         }}
       />
-      {showTagline && (
-        <div className={`items-center gap-1.5 rounded-full font-bold tracking-tight mt-2 sm:mt-2.5 ${pillStyle} ${sizeClasses} ${taglineVisibilityClass} ${taglineClassName}`}>
-          <Sparkles className="w-3 h-3 text-[#FF6321] shrink-0" />
-          <span>Building India’s Learning Intelligence Infrastructure</span>
-        </div>
-      )}
     </div>
   );
 };

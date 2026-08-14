@@ -8,8 +8,10 @@ coverage/
 !.env.example
 .claude/settings.local.json
 
-# source art / screenshots kept for reference, not part of the build
+# source art / screenshots kept for reference, not part of the build.
+# Masters live here; the compressed versions that ship are in public/.
 /ss
+/pic
 
 # wrangler local secrets — holds a real Resend API key
 .dev.vars

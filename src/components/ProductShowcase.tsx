@@ -377,29 +377,6 @@ export const ProductShowcase: React.FC<ProductShowcaseProps> = ({ onOpenAudit })
             </div>
           )}
 
-          {/* TAB 5: Evaluator Engine Tab fallback */}
-          {activeTab === 'evaluator' && (
-            <div className="p-8 text-center space-y-4">
-              <div className="w-12 h-12 rounded-full bg-[#FFF0E6] text-[#FF6321] mx-auto flex items-center justify-center font-bold">
-                <Sparkles className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-bold text-[#1A1A1A]">
-                Explore Real Handwritten Answer Sheet Evaluation Above
-              </h3>
-              <p className="text-xs text-[#555] max-w-md mx-auto">
-                Scroll up or click below to test our live interactive handwritten answer evaluator with real physics, mathematics, and chemistry student papers.
-              </p>
-              <button
-                onClick={() => {
-                  const elem = document.getElementById('evaluator-demo');
-                  elem?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="px-6 py-3 rounded-full bg-[#FF6321] text-white text-xs font-bold hover:bg-[#E05215] transition-colors cursor-pointer shadow-md"
-              >
-                Go To Handwritten Evaluator
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </section>

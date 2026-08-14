@@ -8,6 +8,7 @@ import { ProductShowcase } from './components/ProductShowcase';
 import { TargetUsers } from './components/TargetUsers';
 import { TrustAndSecurity } from './components/TrustAndSecurity';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
+import { Blog } from './components/Blog';
 import { Footer } from './components/Footer';
 import { LoginModal } from './components/LoginModal';
 import { BookAuditModal } from './components/BookAuditModal';
@@ -15,32 +16,78 @@ import { WebsiteBillingModal } from './components/WebsiteBillingModal';
 import { PortalIframe } from './components/PortalIframe';
 import { Sparkles, ArrowRight, BrainCircuit, BarChart3, Search, ShieldCheck } from 'lucide-react';
 
+type Tab = 'home' | 'learning-gap' | 'privacy' | 'blog';
+
+/**
+ * Every tab owns a URL. Previously only the blog pushed history, so switching
+ * away from it left /blog in the address bar and a refresh snapped back to the
+ * blog. Tab and path now move together in both directions.
+ */
+const TAB_PATHS: Record<Tab, string> = {
+  home: '/',
+  'learning-gap': '/diagnostic-engine',
+  privacy: '/privacy-policy',
+  blog: '/blog'
+};
+
+const pathToTab = (path: string): Tab => {
+  if (path === TAB_PATHS['learning-gap']) return 'learning-gap';
+  if (path === TAB_PATHS.privacy) return 'privacy';
+  if (path === '/blog' || path.startsWith('/blog/')) return 'blog';
+  return 'home';
+};
+
 export default function App() {
-  const [currentTab, setCurrentTab] = useState<'home' | 'learning-gap' | 'privacy'>('home');
+  const [currentTab, setCurrentTab] = useState<Tab>('home');
   const [activePortal, setActivePortal] = useState<'teachers' | 'students' | 'admin' | null>(null);
+  /** Slug of the open article, or null for the blog listing. */
+  const [blogSlug, setBlogSlug] = useState<string | null>(null);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [loginRole, setLoginRole] = useState<'teacher' | 'student' | 'admin'>('teacher');
   const [auditModalOpen, setAuditModalOpen] = useState(false);
   const [websiteBillingModalOpen, setWebsiteBillingModalOpen] = useState(false);
 
   useEffect(() => {
+    /**
+     * Single source of truth for what the URL means. Runs on first paint and on
+     * every back/forward, so a refresh or a shared link lands on the right view
+     * instead of falling back to the homepage.
+     */
     const checkPath = () => {
-      const path = window.location.pathname.toLowerCase().replace(/\/$/, '');
-      if (path === '/teachers') {
-        setActivePortal('teachers');
-      } else if (path === '/students') {
-        setActivePortal('students');
-      } else if (path === '/admin') {
-        setActivePortal('admin');
-      } else {
-        setActivePortal(null);
+      // Keep the raw pathname around: slugs must match the data with their
+      // original casing, even though routes are compared lowercased.
+      const raw = window.location.pathname.replace(/\/+$/, '');
+      const path = raw.toLowerCase() || '/';
+
+      if (path === '/teachers' || path === '/students' || path === '/admin') {
+        setActivePortal(path.slice(1) as 'teachers' | 'students' | 'admin');
+        return;
       }
+      setActivePortal(null);
+
+      setCurrentTab(pathToTab(path));
+      setBlogSlug(path.startsWith('/blog/') ? raw.slice('/blog/'.length) : null);
     };
 
     checkPath();
     window.addEventListener('popstate', checkPath);
     return () => window.removeEventListener('popstate', checkPath);
   }, []);
+
+  /** Navigate within the blog, keeping the URL in step. */
+  const handleSelectPost = (slug: string | null) => {
+    window.history.pushState({}, '', slug ? `/blog/${slug}` : '/blog');
+    setBlogSlug(slug);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  /** The only way to change tab. Keeps the URL and the view in lockstep. */
+  const navigateToTab = (tab: Tab) => {
+    window.history.pushState({}, '', TAB_PATHS[tab]);
+    setCurrentTab(tab);
+    setBlogSlug(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleSelectPortal = (portal: 'teachers' | 'students' | 'admin') => {
     window.history.pushState({}, '', `/${portal}`);
@@ -59,13 +106,12 @@ export default function App() {
 
   const handleScrollToSection = (sectionId: string) => {
     if (sectionId === 'learning-gap-intelligence' || sectionId === 'evaluator-demo' || sectionId === 'dashboards') {
-      setCurrentTab('learning-gap');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      navigateToTab('learning-gap');
       return;
     }
-    
+
     if (currentTab !== 'home') {
-      setCurrentTab('home');
+      navigateToTab('home');
       setTimeout(() => {
         const elem = document.getElementById(sectionId);
         if (elem) elem.scrollIntoView({ behavior: 'smooth' });
@@ -90,18 +136,23 @@ export default function App() {
         onOpenAudit={() => setAuditModalOpen(true)}
         onScrollToSection={handleScrollToSection}
         currentTab={currentTab}
-        onSelectTab={(tab) => setCurrentTab(tab)}
+        onSelectTab={navigateToTab}
       />
 
       {/* Main Page Content */}
+      {/* Clears the fixed header, which is taller now that the logo carries its
+          descriptor inside the artwork. */}
       <main className="pt-16 sm:pt-20">
         {currentTab === 'privacy' ? (
           <PrivacyPolicy
-            onBackToHome={() => {
-              setCurrentTab('home');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
+            onBackToHome={() => navigateToTab('home')}
             onOpenAudit={() => setAuditModalOpen(true)}
+          />
+        ) : currentTab === 'blog' ? (
+          <Blog
+            activeSlug={blogSlug}
+            onSelectPost={handleSelectPost}
+            onBackToHome={() => navigateToTab('home')}
           />
         ) : currentTab === 'home' ? (
           <>
@@ -139,10 +190,8 @@ export default function App() {
       <Footer
         onOpenLogin={handleOpenLogin}
         onOpenAudit={() => setAuditModalOpen(true)}
-        onOpenPrivacy={() => {
-          setCurrentTab('privacy');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onOpenPrivacy={() => navigateToTab('privacy')}
+        onOpenBlog={() => navigateToTab('blog')}
         onScrollToSection={handleScrollToSection}
       />
 

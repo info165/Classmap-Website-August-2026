@@ -2,7 +2,7 @@
 
 @theme {
   --font-serif: 'Newsreader', Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --color-editorial-accent: #FF6321;
   --color-editorial-paper: #FDFCFB;
   --color-editorial-dark: #1A1A1A;
@@ -12,5 +12,17 @@ body {
   font-family: var(--font-sans);
   background-color: #FDFCFB;
   color: #1A1A1A;
+  /* Both families are variable with an optical size axis: let the browser pick
+     the right cut for the size instead of scaling one master. */
+  font-optical-sizing: auto;
+  /* Inter's default figures are proportional and a little loose next to text.
+     cv05/ss03 tighten the lowercase l and the ampersand; tnum keeps columns of
+     numbers aligned, which this site has plenty of. */
+  font-feature-settings: 'cv05' 1, 'ss03' 1;
+}
+
+/* Large display type sits tighter than Inter's default tracking allows. */
+h1, h2, h3 {
+  letter-spacing: -0.011em;
 }
 

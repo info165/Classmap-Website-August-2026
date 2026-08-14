@@ -1,0 +1,27 @@
+# Binary assets must never go through end-of-line conversion.
+#
+# core.autocrlf is true on this machine. Git normally auto-detects binaries by
+# looking for NUL bytes and skips conversion, but detection is a heuristic — and
+# every raster image in this repo was corrupted once already. Declaring the
+# types explicitly removes the guess.
+
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.ico  binary
+*.mp4  binary
+*.webm binary
+*.mp3  binary
+*.pdf  binary
+*.woff  binary
+*.woff2 binary
+*.ttf  binary
+*.otf  binary
+*.eot  binary
+
+# Text that must keep LF regardless of platform: Cloudflare reads these on Linux.
+_redirects   text eol=lf
+_headers     text eol=lf
+*.sh         text eol=lf

@@ -48,7 +48,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, initialRole = 't
         <div className="space-y-6">
           {/* Header */}
           <div className="text-center space-y-2">
-            <Logo size="sm" className="items-center justify-center mb-2" taglineClassName="text-center text-[#706E66]" />
+            <Logo size="sm" className="items-center justify-center mb-2" />
             <h3 className="text-xl font-bold text-[#12151C]">
               ClassMap Portal Access
             </h3>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, CheckCircle2, ShieldCheck, Sparkles, Mail, Phone, MessageCircle } from 'lucide-react';
+import { X, CheckCircle2, ShieldCheck, Sparkles, Phone, MessageCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface BookAuditModalProps {
@@ -207,10 +207,7 @@ export const BookAuditModal: React.FC<BookAuditModalProps> = ({ isOpen, onClose 
                     <span>Sending Request...</span>
                   </>
                 ) : (
-                  <>
-                    <Mail className="w-4 h-4" />
-                    <span>Submit Demo Request to info@classmap.in</span>
-                  </>
+                  <span>Submit</span>
                 )}
               </button>
             </form>

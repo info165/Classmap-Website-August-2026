@@ -156,7 +156,7 @@ export const WebsiteBillingModal: React.FC<WebsiteBillingModalProps> = ({ isOpen
             <div className="p-4 rounded-xl bg-[#141721] border border-[#252A3A] flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-white rounded-2xl border border-stone-200 flex items-center justify-center">
-                  <Logo size="md" showTagline={false} />
+                  <Logo size="md" />
                 </div>
                 <div className="text-xs space-y-1">
                   <p className="font-bold text-white">Classmap Website Logo Placeholder</p>
