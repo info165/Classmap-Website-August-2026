@@ -270,8 +270,6 @@ export const Blog: React.FC<BlogProps> = ({ activeSlug, onSelectPost, onBackToHo
   }
 
   /* ---------------------------------------------------------------- listing */
-  const [featured, ...rest] = BLOG_POSTS;
-
   return (
     <div className="bg-[#FDFCFB] animate-in fade-in duration-300">
       {/* ---------------------------------------------------------------- hero */}
@@ -311,56 +309,58 @@ export const Blog: React.FC<BlogProps> = ({ activeSlug, onSelectPost, onBackToHo
             No articles published yet. Check back shortly.
           </p>
         ) : (
-          <>
-            {/* ------------------------------------------------------ featured */}
-            {/* Lead article. The picture takes five columns of twelve, which
-                leaves the headline a wide enough measure to break in three
-                lines instead of five, and keeps the image from towering. */}
-            <button
-              onClick={() => openPost(featured)}
-              className="group mt-10 block w-full max-w-5xl overflow-hidden rounded-2xl border border-[#E8E4DA] bg-white text-left transition-all duration-300 ease-out cursor-pointer hover:-translate-y-1 hover:border-[#D6CFC0] hover:shadow-[0_26px_54px_-30px_rgba(26,26,26,0.3)]"
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-12">
-                <div className="relative lg:col-span-5 aspect-[16/10] lg:aspect-auto overflow-hidden bg-[#F5F1EA]">
-                  <div className="absolute inset-0 transition-transform duration-[650ms] ease-out group-hover:scale-[1.05]">
-                    <Cover post={featured} />
-                  </div>
-                </div>
-
-                <div className="lg:col-span-7 flex flex-col justify-center p-8 sm:p-10">
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#9A9488]">
-                    {formatDate(featured.date)} &middot; {featured.readMinutes} min read
-                  </div>
-
-                  <h2 className="mt-4 font-serif text-2xl sm:text-[28px] font-medium leading-[1.22] tracking-tight text-[#1A1A1A] transition-colors group-hover:text-[#FF6321]">
-                    {featured.title}
-                  </h2>
-
-                  <p className="mt-4 text-[15px] leading-relaxed text-[#66635B]">
-                    {featured.excerpt}
-                  </p>
-
-                  <span className="mt-7 inline-flex items-center gap-2 text-xs font-bold text-[#FF6321]">
-                    Read article
-                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
-                  </span>
-                </div>
-              </div>
-            </button>
-
-            {rest.length > 0 && (
-              <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
-                {rest.map((p) => (
-                  <ArticleCard key={p.slug} post={p} onOpen={openPost} />
-                ))}
-              </div>
-            )}
-          </>
+          <div className="mt-10 space-y-8">
+            {BLOG_POSTS.map((post) => (
+              <FeatureCard key={post.slug} post={post} onOpen={openPost} />
+            ))}
+          </div>
         )}
       </div>
     </div>
   );
 };
+
+/**
+ * Listing card. Picture on the left five columns of twelve, copy on the right
+ * seven, which leaves the headline a wide enough measure to break in three
+ * lines instead of five and keeps the picture from towering. Every post in the
+ * listing uses this, so the rows are identical by construction rather than by
+ * being kept in sync by hand.
+ */
+const FeatureCard: React.FC<{ post: BlogPost; onOpen: (p: BlogPost) => void }> = ({
+  post,
+  onOpen,
+}) => (
+  <button
+    onClick={() => onOpen(post)}
+    className="group block w-full max-w-5xl overflow-hidden rounded-2xl border border-[#E8E4DA] bg-white text-left transition-all duration-300 ease-out cursor-pointer hover:-translate-y-1 hover:border-[#D6CFC0] hover:shadow-[0_26px_54px_-30px_rgba(26,26,26,0.3)]"
+  >
+    <div className="grid grid-cols-1 lg:grid-cols-12">
+      <div className="relative lg:col-span-5 aspect-[16/10] lg:aspect-auto overflow-hidden bg-[#F5F1EA]">
+        <div className="absolute inset-0 transition-transform duration-[650ms] ease-out group-hover:scale-[1.05]">
+          <Cover post={post} />
+        </div>
+      </div>
+
+      <div className="lg:col-span-7 flex flex-col justify-center p-8 sm:p-10">
+        <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#9A9488]">
+          {formatDate(post.date)} &middot; {post.readMinutes} min read
+        </div>
+
+        <h2 className="mt-4 font-serif text-2xl sm:text-[28px] font-medium leading-[1.22] tracking-tight text-[#1A1A1A] transition-colors group-hover:text-[#FF6321]">
+          {post.title}
+        </h2>
+
+        <p className="mt-4 text-[15px] leading-relaxed text-[#66635B]">{post.excerpt}</p>
+
+        <span className="mt-7 inline-flex items-center gap-2 text-xs font-bold text-[#FF6321]">
+          Read article
+          <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+        </span>
+      </div>
+    </div>
+  </button>
+);
 
 /**
  * The single article card used everywhere — the listing and the strip beneath
