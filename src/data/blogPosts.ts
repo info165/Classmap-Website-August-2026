@@ -43,6 +43,52 @@ export interface BlogPost {
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: 'r3-the-third-language-question',
+    title: 'R3: The Third Language Question India’s Schools Must Answer',
+    excerpt:
+      'India’s three-language framework aims to strengthen multilingualism — but the real challenge is not choosing three languages. It is making sure every school has the teachers, resources, time, and flexibility to teach them well.',
+    author: 'ClassMap Team',
+    date: '2026-08-28',
+    readMinutes: 4,
+    category: 'Policy',
+    coverImage: '/blog/r3-third-language.jpg',
+    coverAlt:
+      'A school student in uniform seated at a desk with an open notebook and a globe, looking towards a row of open coloured doors, each marked with a letter of an Indian script and opening onto a different landscape or classroom',
+    body: [
+      {
+        type: 'paragraph',
+        text: 'For a Class 6 student, learning a third language may sound like an exciting opportunity to discover a new culture and way of communicating. But what happens when the language a student wants to learn is not offered by their school? Or when there is no trained teacher, textbook, worksheet, or digital material available for it? This is where the gap between policy and classroom reality becomes visible. The three-language framework, being implemented from Class 6, is designed to promote multilingualism, but schools across India operate with very different resources. For many students, their “choice” of a third language may ultimately depend less on what interests them and more on what their school can provide.',
+      },
+      {
+        type: 'paragraph',
+        text: 'The deeper issue is that language learning is not like adding another textbook-based subject to the timetable. A language requires regular speaking, listening, reading, writing, and meaningful interaction. Teachers therefore need specialised training, while students need consistent learning material and classroom practice. The challenge becomes even more complex in regions such as the Northeast, where students may already speak indigenous or local languages but schools can struggle to find trained teachers to formally teach them. Existing resources such as Jaadui Pitara, Bhasha Sangam, and multilingual primers can support the vision, but resources alone cannot solve the implementation gap. Student transfers create another complication: a language combination available in one state or school may not be available in another, potentially disrupting a student’s learning journey.',
+      },
+      {
+        // Same block the other two posts use. R3 is the piece's own shorthand
+        // for the three-language framework, so it fits the slot a figure holds
+        // there; the caption is verbatim from the paragraph above.
+        type: 'stat',
+        value: 'R3',
+        label:
+          'The three-language framework, being implemented from Class 6, is designed to promote multilingualism, but schools across India operate with very different resources.',
+      },
+      {
+        type: 'paragraph',
+        text: 'This is why implementation needs to be student-centred and phased rather than simply policy-driven. Schools need to first map which languages students want to learn, assess teacher availability, and identify gaps in textbooks and digital resources. Teachers should receive training in beginner-language pedagogy, and schools should use technology and shared digital resources where qualified teachers are unavailable. The Supreme Court’s recent consideration of whether CBSE should postpone Class 6 implementation highlights these practical concerns. The Court has also raised questions around how English fits within the framework and whether students would have adequate preparation time before being assessed in Class 10. A phased rollout could give schools time to build capacity instead of making students absorb the consequences of an unprepared system.',
+      },
+      {
+        // Pull quote: repeats the opening of the paragraph below it, the same
+        // editorial pattern used in the two posts above.
+        type: 'quote',
+        text: 'Ultimately, the debate around R3 is not really about whether students should learn another language. It is about whether they will have a genuine choice in doing so.',
+      },
+      {
+        type: 'paragraph',
+        text: 'Ultimately, the debate around R3 is not really about whether students should learn another language. It is about whether they will have a genuine choice in doing so. Promoting Indian languages is an important educational goal, but that goal can only succeed when schools have the teachers, infrastructure, learning materials, training, and classroom time to support it. The most important question is therefore not, “How many languages should a student learn?” but “Can every student access the language they are being asked to learn?” A strong language policy should expand a child’s opportunities, not make their third-language choice a reflection of their school’s limitations.',
+      },
+    ],
+  },
+  {
     slug: 'nep-2020-marks-over-meaning-five-years-in',
     title:
       'NEP 2020 Promised to End “Marks Over Meaning.” Five Years In, Its Own Data Shows Why That’s Still Hard.',

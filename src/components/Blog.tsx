@@ -228,7 +228,9 @@ export const Blog: React.FC<BlogProps> = ({ activeSlug, onSelectPost, onBackToHo
 
         {post.coverImage && (
           <div className="max-w-5xl mx-auto px-4 sm:px-6">
-            <div className="overflow-hidden rounded-3xl border border-[#E5E1D6] aspect-[16/8]">
+            {/* 3:2 matches the covers, which are all 1536x1024. A 2:1 frame here
+                cropped the top and bottom off every one of them. */}
+            <div className="overflow-hidden rounded-3xl border border-[#E5E1D6] aspect-[3/2]">
               <Cover post={post} />
             </div>
           </div>
