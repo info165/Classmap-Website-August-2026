@@ -214,6 +214,9 @@ export const Blog: React.FC<BlogProps> = ({ activeSlug, onSelectPost, onBackToHo
             <span className="flex items-center gap-1.5">
               <PenLine className="w-3.5 h-3.5 text-[#FF6321]" />
               {post.author}
+              {post.authorRole && (
+                <span className="text-[#9A9488]">&middot; {post.authorRole}</span>
+              )}
             </span>
             <span className="flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-[#FF6321]" />
@@ -243,7 +246,29 @@ export const Blog: React.FC<BlogProps> = ({ activeSlug, onSelectPost, onBackToHo
             ))}
           </div>
 
-          <div className="mt-14 pt-8 border-t border-[#EAE7DE] flex flex-wrap gap-3">
+          {/* Byline block. The head of the article carries the name inline with
+              the date; this closes the piece with the attribution stated
+              properly, which is where a reader looks for it. */}
+          <div className="mt-14 pt-8 border-t border-[#EAE7DE] flex items-center gap-4">
+            <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#FFEDE2] text-base font-bold text-[#C9541C]">
+              {post.author
+                .split(' ')
+                .map((w) => w[0])
+                .slice(0, 2)
+                .join('')}
+            </span>
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#9A9488]">
+                Written by
+              </div>
+              <div className="mt-1 font-serif text-lg font-medium text-[#1A1A1A]">{post.author}</div>
+              {post.authorRole && (
+                <div className="text-sm text-[#77746B]">{post.authorRole}</div>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-10 flex flex-wrap gap-3">
             <button
               onClick={onBackToHome}
               className="inline-flex items-center px-5 py-2.5 rounded-full border border-[#F2D5C4] bg-gradient-to-b from-white to-[#FFF4EC] text-xs font-bold text-[#C9541C] shadow-[0_1px_2px_rgba(26,26,26,0.05),inset_0_1px_0_#ffffff] hover:-translate-y-px hover:border-[#FFB68F] hover:text-[#FF6321] hover:shadow-[0_2px_4px_rgba(26,26,26,0.05),0_8px_18px_-8px_rgba(255,99,33,0.45),inset_0_1px_0_#ffffff] transition-all duration-300 ease-out cursor-pointer"

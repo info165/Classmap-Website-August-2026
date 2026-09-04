@@ -26,6 +26,8 @@ export interface BlogPost {
   /** One or two lines shown on the card in the listing. */
   excerpt: string;
   author: string;
+  /** Shown under the author's name in the byline block, e.g. 'Executive Editor'. */
+  authorRole?: string;
   /** ISO yyyy-mm-dd. Formatted for display at render time. */
   date: string;
   readMinutes: number;
@@ -42,12 +44,26 @@ export interface BlogPost {
 }
 
 export const BLOG_POSTS: BlogPost[] = [
+  /* ------------------------------------------------------------------
+     TEMPORARILY UNPUBLISHED - do not delete.
+
+     Commented out on request, not removed. Uncomment this block to put
+     the post back; nothing else needs changing. Its cover image is still
+     on disk at public/blog/r3-third-language.jpg and still committed, so
+     restoring the post needs no new assets.
+
+     While it is out, /blog/r3-the-third-language-question no longer
+     resolves to a post. That is handled: an unknown slug falls through to
+     the listing rather than erroring.
+     ------------------------------------------------------------------ */
+  /*
   {
     slug: 'r3-the-third-language-question',
     title: 'R3: The Third Language Question India’s Schools Must Answer',
     excerpt:
       'India’s three-language framework aims to strengthen multilingualism — but the real challenge is not choosing three languages. It is making sure every school has the teachers, resources, time, and flexibility to teach them well.',
-    author: 'ClassMap Team',
+    author: 'Janvi Surana',
+    authorRole: 'Executive Editor',
     date: '2026-08-28',
     readMinutes: 4,
     category: 'Policy',
@@ -88,13 +104,16 @@ export const BLOG_POSTS: BlogPost[] = [
       },
     ],
   },
+  */
+
   {
     slug: 'nep-2020-marks-over-meaning-five-years-in',
     title:
       'NEP 2020 Promised to End “Marks Over Meaning.” Five Years In, Its Own Data Shows Why That’s Still Hard.',
     excerpt:
       'The uncomfortable numbers from India’s new assessment system may look like evidence of failure. They may actually be evidence that the system has finally started measuring the problem it was designed to fix.',
-    author: 'ClassMap Team',
+    author: 'Janvi Surana',
+    authorRole: 'Executive Editor',
     date: '2026-08-21',
     readMinutes: 5,
     category: 'Assessment',
@@ -140,7 +159,8 @@ export const BLOG_POSTS: BlogPost[] = [
       'How Can India’s Education System Strike the Right Balance Between Board Exams and Entrance Tests?',
     excerpt:
       'Board exams and entrance tests reward different skills, so students end up preparing for two parallel systems instead of one meaningful learning journey.',
-    author: 'ClassMap Team',
+    author: 'Janvi Surana',
+    authorRole: 'Executive Editor',
     date: '2026-08-14',
     readMinutes: 4,
     category: 'Policy',
