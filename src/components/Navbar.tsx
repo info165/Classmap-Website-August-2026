@@ -59,8 +59,20 @@ export const Navbar: React.FC<NavbarProps> = ({
           : 'bg-white border-[#EDEAE1] py-3 shadow-[0_1px_3px_rgba(26,26,26,0.04)]'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-2 sm:gap-4">
+      {/* Full-bleed rather than the 80rem container the page sections use:
+          the brand sits against the left edge and the login control against
+          the right, instead of both floating inside a centred column with
+          empty gutters either side. */}
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12">
+        {/* From lg up this becomes a 1fr / auto / 1fr grid so the nav is
+            centred on the page itself. justify-between only centres the
+            middle group when the two side groups happen to be the same
+            width, and the brand is far wider than the login control.
+
+            Only from xl: between lg and xl the nav is wider than the middle
+            column can hold, and grid items overflow their track rather than
+            shrink, so it ran under the logo. */}
+        <div className="flex items-center justify-between gap-2 sm:gap-4 xl:grid xl:grid-cols-[1fr_auto_1fr]">
           
           {/* Brand Logo (Responsive height, single line on mobile) */}
           <button
@@ -74,7 +86,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           {/* Desktop Center Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-xs font-semibold text-[#333]">
+          <nav className="hidden lg:flex xl:justify-self-center items-center gap-1 xl:gap-2 text-xs font-semibold text-[#333]">
             {/* Always a solid, raised surface — the pale outline it had before
                 read as a label rather than something to press. The current page
                 is shown as a pressed state instead of a different colour, which
@@ -127,7 +139,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           {/* Desktop Right Action Area */}
-          <div className="hidden lg:flex items-center gap-3 shrink-0">
+          <div className="hidden lg:flex xl:justify-self-end items-center gap-3 shrink-0">
             {/* Login Dropdown */}
             <div className="relative">
               <button

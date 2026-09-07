@@ -1,29 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import { firebaseConfig } from '../lib/firebase';
 import { getOrSeedStorageUrl } from '../lib/firebaseStorageSync';
-/** Mark plus wordmark only — no descriptor line. */
-import defaultLogoImg from '../assets/images/logo-original.png';
+/**
+ * The mark on its own — it carries no wordmark, so the name is set as live text
+ * beside it rather than baked into the artwork. That keeps it selectable, sharp
+ * at every size, and translatable.
+ */
+import defaultLogoImg from '../assets/images/logo-mark-new.png';
 
 interface LogoProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   imageUrl?: string;
+  /** Hide the name, e.g. where a custom full lockup has been uploaded. */
+  showWordmark?: boolean;
 }
+
+/* The mark is roughly square, so its height reads much smaller than the old
+   5.4:1 lockup did at the same value — these run a step taller to compensate.
+   The name is sized at about 0.7x the mark, the ratio the previous lockup used
+   between its wordmark and its symbol. */
+const SIZES = {
+  sm: { mark: 'h-7 sm:h-8', text: 'text-base sm:text-lg', weight: 'font-bold' },
+  // The header sets the name larger and at 800. Against this mark it read
+  // undersized and light at 700; the footer, which is already larger, keeps 700.
+  md: { mark: 'h-8 sm:h-9', text: 'text-2xl sm:text-[28px]', weight: 'font-extrabold' },
+  lg: { mark: 'h-9 sm:h-10 md:h-11', text: 'text-xl sm:text-2xl', weight: 'font-bold' },
+  xl: { mark: 'h-9 sm:h-10 md:h-11 lg:h-12', text: 'text-xl sm:text-2xl md:text-[26px]', weight: 'font-bold' },
+};
 
 export const Logo: React.FC<LogoProps> = ({
   className = '',
   size = 'md',
-  imageUrl
+  imageUrl,
+  showWordmark = true
 }) => {
-  // The wordmark is a wide 5.4:1 lockup, so height reads much larger than the
-  // number suggests — these sit deliberately below typical logo heights.
-  const responsiveHeightClasses = {
-    sm: 'h-6 sm:h-7',
-    md: 'h-7 sm:h-8',
-    lg: 'h-8 sm:h-9 md:h-10',
-    xl: 'h-8 sm:h-9 md:h-10 lg:h-11'
-  };
-
   const [displayUrl, setDisplayUrl] = useState<string>(imageUrl || defaultLogoImg);
 
   useEffect(() => {
@@ -63,19 +74,30 @@ export const Logo: React.FC<LogoProps> = ({
     };
   }, [imageUrl]);
 
+  const s = SIZES[size];
+
   return (
-    <div className={`inline-flex flex-col items-start shrink-0 select-none ${className}`}>
+    <div className={`inline-flex items-center gap-2 sm:gap-2.5 shrink-0 select-none ${className}`}>
+      {/* Decorative: the name sits in the text beside it, so announcing the
+          image too would read the brand out twice. */}
       <img
         src={displayUrl}
-        alt="ClassMap Logo"
-        className={`object-contain max-w-full shrink-0 transition-transform duration-300 group-hover:scale-[1.02] ${responsiveHeightClasses[size]}`}
+        alt=""
+        aria-hidden="true"
+        className={`w-auto object-contain shrink-0 transition-transform duration-300 group-hover:scale-[1.04] ${s.mark}`}
         onError={() => {
           if (displayUrl !== defaultLogoImg) {
             setDisplayUrl(defaultLogoImg);
           }
         }}
       />
+      {showWordmark && (
+        <span
+          className={`font-sans tracking-[-0.02em] text-[#FF6321] leading-none ${s.weight} ${s.text}`}
+        >
+          ClassMap
+        </span>
+      )}
     </div>
   );
 };
-
