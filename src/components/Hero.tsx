@@ -1,113 +1,150 @@
-import React from 'react';
-import { ArrowRight, ShieldCheck, Building2 } from 'lucide-react';
-import heroArtwork from '../assets/images/hero-answer-evaluation.webp';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
+import { ArrowRight, ShieldCheck, Building2, Camera, ChevronDown } from 'lucide-react';
+import { EvaluationConsole } from './EvaluationConsole';
+import { SilkField } from './ui/SilkField';
+import { EASE, Eyebrow, GhostButton, PrimaryButton, Tilt3D, WordReveal } from './ui/primitives';
 
 interface HeroProps {
   onExploreEvaluator: () => void;
   onOpenAudit: () => void;
 }
 
-/* The two objections the hero actually has to answer: is our data safe, and
-   does this fit our board. Each carries its own mark rather than sharing one. */
+/* The objections the hero has to answer: is our data safe, does this fit our
+   board, and what does it cost us to adopt. Each carries its own mark. */
 const CREDENTIALS = [
-  { label: 'DPDP Act 2023 Compliant', icon: ShieldCheck, tone: 'text-[#15A06B]' },
-  { label: 'CBSE, ICSE & State Board Aligned', icon: Building2, tone: 'text-[#FF6321]' }
+  { label: 'DPDP Act 2023 Compliant', icon: ShieldCheck },
+  { label: 'CBSE, ICSE & State Board Aligned', icon: Building2 },
+  { label: 'No hardware or OMR sheets', icon: Camera }
 ];
 
 export const Hero: React.FC<HeroProps> = ({ onExploreEvaluator, onOpenAudit }) => {
+  const reduce = useReducedMotion();
+  const { scrollY } = useScroll();
+  // The background drifts slower than the page, which is what gives it depth.
+  const bgY = useTransform(scrollY, [0, 800], [0, reduce ? 0 : 160]);
+  // Only the headline block recedes; the console below must stay fully lit.
+  const fade = useTransform(scrollY, [120, 620], [1, reduce ? 1 : 0.25]);
+
+  // The console arrives tipped back, like a screen on a desk, and lays itself
+  // flat toward the reader as it rises into view: tied to the scroll, so it
+  // moves exactly as fast as the visitor does.
+  const stageRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: rise } = useScroll({ target: stageRef, offset: ['start end', 'center center'] });
+  const tiltX = useTransform(rise, [0, 1], [reduce ? 0 : 28, 0]);
+  const lift = useTransform(rise, [0, 1], [reduce ? 1 : 0.9, 1]);
+  const glow = useTransform(rise, [0, 1], [0.15, 1]);
+
+
   return (
-    <section className="relative pt-4 sm:pt-8 md:pt-10 pb-16 md:pb-20 bg-[#FDFCFB] text-[#1A1A1A]">
-      {/* Ambient warmth. Two very low-opacity washes: one behind the artwork so
-          it sits in light rather than on a flat field, one anchoring the
-          bottom-left. No negative z-index — that would push them behind the
-          section's own background and render them invisible. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-32 right-0 h-[640px] w-[860px] rounded-full bg-[radial-gradient(closest-side,rgba(255,99,33,0.10),transparent)]" />
-        <div className="absolute -bottom-40 -left-32 h-[480px] w-[600px] rounded-full bg-[radial-gradient(closest-side,rgba(255,99,33,0.055),transparent)]" />
-      </div>
+    <section
+      className="noise relative isolate overflow-hidden bg-[#07080C] pb-24 pt-32 text-white sm:pt-40 lg:pb-32"
+    >
+      {/* ------------------------------------------------------------ backdrop */}
+      {/* A ribbon of light flows behind the opening screen. The words sit in a
+          pool of darkness so they always read; the ribbon shows at either side
+          of them and beneath. */}
+      <motion.div aria-hidden="true" style={{ y: bgY }} className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[100svh] min-h-[640px]">
+        <SilkField className="absolute inset-0 [mask-image:linear-gradient(to_bottom,#000_70%,transparent)]" />
+        <div className="absolute left-1/2 top-[44%] h-[70%] w-[78%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(7,8,12,0.88),rgba(7,8,12,0.55)_55%,transparent)]" />
+      </motion.div>
+      {/* Seam into the next section */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-b from-transparent to-[#07080C]" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* 5/7 rather than 6/6, with a tighter gap. The artwork needs the width
-            far more than the copy does — the headline's longest line still
-            clears the narrower column, so nothing rewraps. */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-6 items-center">
+      <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+        {/* --------------------------------------------------------- headline */}
+        <motion.div style={{ opacity: fade }} className="mx-auto max-w-[1180px] text-center">
+          <motion.div
+            initial={reduce ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.45, ease: EASE }}
+          >
+            <Eyebrow tone="dark" icon={<span className="h-1.5 w-1.5 rounded-full bg-[#FF6321] shadow-[0_0_10px_2px_rgba(255,99,33,0.9)]" />}>
+              Learning Gap Intelligence Platform
+            </Eyebrow>
+          </motion.div>
 
-          {/* LEFT COLUMN: HERO HEADLINE & CTA */}
-          <div className="lg:col-span-5 lg:pt-3 flex flex-col justify-center space-y-6">
-            {/* Main Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-bold leading-[1.08] font-sans text-[#1A1A1A] tracking-tight">
-              Every Student Deserves a{' '}
-              {/* inline-block is load-bearing, not cosmetic: it keeps the
-                  orange phrase starting on its own line instead of running on
-                  after "Deserves a". */}
-              <span className="inline-block text-[#FF6321] font-extrabold">
-                Personal Learning Journey.
-              </span>
-            </h1>
+          <h1 className="mt-7 text-balance text-[2.7rem] font-semibold leading-[1] tracking-[-0.045em] sm:text-6xl lg:text-[4.6rem] xl:text-[5.4rem]">
+            <WordReveal text="Every Student Deserves a" wordClassName="text-gradient-light" delay={0.6} />
+            <br />
+            <WordReveal text="Personal Learning Journey." wordClassName="text-gradient-brand" delay={0.85} />
+          </h1>
 
-            {/* Paragraph */}
-            <p className="text-base sm:text-lg text-[#555] leading-relaxed font-normal max-w-xl">
-              ClassMap helps students understand strengths, identify learning gaps, and automatically create personalized practice so every student can improve with confidence.
-            </p>
+          <motion.p
+            initial={reduce ? false : { opacity: 0, y: 18, filter: 'blur(8px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ duration: 0.9, delay: 1.1, ease: EASE }}
+            className="mx-auto mt-7 max-w-2xl text-pretty text-base leading-relaxed text-stone-400 sm:text-lg lg:text-xl"
+          >
+            ClassMap helps students understand strengths, identify learning gaps, and automatically create personalized practice so every student can improve with confidence.
+          </motion.p>
 
-            {/* CTA Buttons. The primary carries the same raised-control
-                treatment as the header's Diagnostic Engine button so the two
-                read as one system: solid gradient, lit top edge, lift on
-                hover, genuine press on click. */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
-              <button
-                onClick={onOpenAudit}
-                className="group/cta select-none rounded-full border border-[#DB4C0E] bg-gradient-to-b from-[#FF8244] to-[#F0530F] px-8 py-4 text-sm font-bold text-white shadow-[0_1px_0_rgba(255,255,255,0.45)_inset,0_2px_4px_rgba(140,48,8,0.28),0_14px_30px_-12px_rgba(255,99,33,0.65)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:from-[#FF8C50] hover:to-[#F65B16] hover:shadow-[0_1px_0_rgba(255,255,255,0.45)_inset,0_4px_8px_rgba(140,48,8,0.26),0_20px_38px_-14px_rgba(255,99,33,0.7)] active:translate-y-px active:shadow-[inset_0_2px_4px_rgba(140,48,8,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6321]/45 focus-visible:ring-offset-2 focus-visible:ring-offset-[#FDFCFB] cursor-pointer flex items-center justify-center gap-2 text-center"
-              >
-                <span>Book a Free Demo</span>
-                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover/cta:translate-x-0.5" />
-              </button>
-            </div>
+          <motion.div
+            initial={reduce ? false : { opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 1.25, ease: EASE }}
+            className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center"
+          >
+            <PrimaryButton onClick={onOpenAudit}>
+              <span>Book a Free Demo</span>
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
+            </PrimaryButton>
+            <GhostButton onClick={onExploreEvaluator}>
+              <span>Explore the Diagnostic Engine</span>
+            </GhostButton>
+          </motion.div>
 
-            {/* Credential strip. This is what closes the gap under the CTA —
-                the left column used to end here and leave a void beside a much
-                taller artwork. */}
-            <div className="pt-6 mt-1 border-t border-[#EAE7DE]">
-              {/* Sentence case, not small caps: these read as plain statements
-                  of fact, and each icon already separates its own item, so no
-                  divider dots are needed. */}
-              <div className="flex flex-wrap items-center gap-x-7 gap-y-2.5 text-[13px] font-medium text-[#4A4740]">
-                {CREDENTIALS.map(({ label, icon: Icon, tone }) => (
-                  <span key={label} className="inline-flex items-center gap-2">
-                    <Icon className={`h-[18px] w-[18px] shrink-0 ${tone}`} />
-                    <span>{label}</span>
-                  </span>
-                ))}
+          <motion.ul
+            initial={reduce ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 1.5 }}
+            className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[13px] font-medium text-stone-400"
+          >
+            {CREDENTIALS.map(({ label, icon: Icon }) => (
+              <li key={label} className="inline-flex items-center gap-2">
+                <Icon className="h-4 w-4 text-[#FF6321]" />
+                {label}
+              </li>
+            ))}
+          </motion.ul>
+        </motion.div>
+
+        {/* ----------------------------------------------------------- console */}
+        <motion.div
+          initial={reduce ? false : { opacity: 0, y: 70, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 1.4, delay: 1.4, ease: EASE }}
+          className="relative mx-auto mt-16 max-w-[1020px] [perspective:1600px] sm:mt-20"
+        >
+          {/* Light pooled beneath the window, brightening as it settles */}
+          <motion.div aria-hidden="true" style={{ opacity: glow }} className="absolute -inset-x-10 -bottom-16 -z-10 h-48 rounded-full bg-[#FF6321]/25 blur-[90px]" />
+          <motion.div ref={stageRef} style={{ rotateX: tiltX, scale: lift, transformOrigin: '50% 100%' }}>
+            <Tilt3D>
+              {/* A thin light that travels round the console's edge */}
+              <div className="relative">
+                <EvaluationConsole />
+                <div aria-hidden="true" className="beam pointer-events-none absolute inset-0 z-10 rounded-[22px]" />
               </div>
-            </div>
+            </Tilt3D>
+          </motion.div>
+          {/* Clear of the floating card that hangs below the console on wide screens */}
+          <p className="mt-5 text-center font-mono text-[11px] tracking-tight text-stone-500 xl:mt-16">
+            A real Class 9 Social Science answer sheet, graded by ClassMap.
+          </p>
+        </motion.div>
 
-          </div>
-
-          {/* RIGHT COLUMN: PRODUCT ARTWORK.
-
-              Fully contained — it must not bleed past the container. The
-              artwork carries its own framed card, so running it off the
-              viewport slices that frame mid-border and reads as a layout bug
-              rather than a full-bleed panel. Width comes from the 7-column
-              span instead.
-
-              No ring, shadow or rounding on the image either: the artwork
-              already supplies all three, and a second frame around it showed
-              as a visible double border. */}
-          <div className="lg:col-span-7">
-            <img
-              src={heroArtwork}
-              alt="ClassMap evaluating a real handwritten student answer sheet: each reasoning step is checked, the incorrect substitution is flagged, and the identified learning gap is shown alongside the student's concept progress."
-              width={1600}
-              height={1178}
-              loading="eager"
-              fetchPriority="high"
-              decoding="async"
-              className="w-full h-auto mx-auto max-w-[640px] lg:max-w-none lg:w-[calc(100%+min(2rem,max(0px,(100vw-80rem)/2)))] lg:translate-x-[min(3.5rem,calc(1rem+max(0px,(100vw-80rem)/2)))]"
-            />
-          </div>
-
-        </div>
+        {/* Scroll cue */}
+        <motion.button
+          onClick={() => document.getElementById('impact')?.scrollIntoView({ behavior: 'smooth' })}
+          aria-label="Scroll to content"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.6 }}
+          className="mx-auto mt-14 hidden cursor-pointer flex-col items-center gap-2 text-stone-600 transition-colors hover:text-stone-300 sm:flex"
+        >
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em]">Scroll</span>
+          <ChevronDown className="h-4 w-4 animate-bounce" />
+        </motion.button>
       </div>
     </section>
   );

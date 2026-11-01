@@ -84,7 +84,7 @@ export const Logo: React.FC<LogoProps> = ({
         src={displayUrl}
         alt=""
         aria-hidden="true"
-        className={`w-auto object-contain shrink-0 transition-transform duration-300 group-hover:scale-[1.04] ${s.mark}`}
+        className={`w-auto object-contain shrink-0 transition-transform duration-300 group-hover:-rotate-[8deg] group-hover:scale-[1.1] ${s.mark}`}
         onError={() => {
           if (displayUrl !== defaultLogoImg) {
             setDisplayUrl(defaultLogoImg);

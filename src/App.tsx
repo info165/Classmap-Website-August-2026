@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { ImpactStrip } from './components/ImpactStrip';
+import { HowItWorks } from './components/HowItWorks';
+import { RealSheet } from './components/RealSheet';
+import { StudentPage } from './components/student/StudentPage';
+import { SchoolPage } from './components/school/SchoolPage';
+import { FinalCTA } from './components/FinalCTA';
+import { CursorGlow, EASE, ScrollProgress } from './components/ui/primitives';
 import { PartnerSchools } from './components/PartnerSchools';
 import { HandwrittenEvaluator } from './components/HandwrittenEvaluator';
 import { PhilosophySection } from './components/PhilosophySection';
@@ -14,9 +21,9 @@ import { LoginModal } from './components/LoginModal';
 import { BookAuditModal } from './components/BookAuditModal';
 import { WebsiteBillingModal } from './components/WebsiteBillingModal';
 import { PortalIframe } from './components/PortalIframe';
-import { Sparkles, ArrowRight, BrainCircuit, BarChart3, Search, ShieldCheck } from 'lucide-react';
+import { motion } from 'motion/react';
 
-type Tab = 'home' | 'learning-gap' | 'privacy' | 'blog';
+type Tab = 'home' | 'learning-gap' | 'privacy' | 'blog' | 'students' | 'schools';
 
 /**
  * Every tab owns a URL. Previously only the blog pushed history, so switching
@@ -27,12 +34,17 @@ const TAB_PATHS: Record<Tab, string> = {
   home: '/',
   'learning-gap': '/diagnostic-engine',
   privacy: '/privacy-policy',
-  blog: '/blog'
+  blog: '/blog',
+  // Not '/students': that path is the student portal itself.
+  students: '/for-students',
+  schools: '/for-schools'
 };
 
 const pathToTab = (path: string): Tab => {
   if (path === TAB_PATHS['learning-gap']) return 'learning-gap';
   if (path === TAB_PATHS.privacy) return 'privacy';
+  if (path === TAB_PATHS.students) return 'students';
+  if (path === TAB_PATHS.schools) return 'schools';
   if (path === '/blog' || path.startsWith('/blog/')) return 'blog';
   return 'home';
 };
@@ -78,7 +90,7 @@ export default function App() {
   const handleSelectPost = (slug: string | null) => {
     window.history.pushState({}, '', slug ? `/blog/${slug}` : '/blog');
     setBlogSlug(slug);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   /** The only way to change tab. Keeps the URL and the view in lockstep. */
@@ -86,7 +98,9 @@ export default function App() {
     window.history.pushState({}, '', TAB_PATHS[tab]);
     setCurrentTab(tab);
     setBlogSlug(null);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Jump, rather than glide: the new page fades in at the top, instead of
+    // appearing part-way down the old one and scrolling up.
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   const handleSelectPortal = (portal: 'teachers' | 'students' | 'admin') => {
@@ -129,7 +143,10 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] text-[#12151C] font-sans antialiased selection:bg-[#FFF2EE] selection:text-[#F95721]">
+    <div className="min-h-screen bg-[#07080C] text-[#12151C] font-sans antialiased selection:bg-[#FF6321]/25 selection:text-inherit">
+      <ScrollProgress />
+      <CursorGlow />
+
       {/* Top Fixed Navigation */}
       <Navbar
         onOpenLogin={handleOpenLogin}
@@ -140,9 +157,16 @@ export default function App() {
       />
 
       {/* Main Page Content */}
-      {/* Clears the fixed header, which is taller now that the logo carries its
-          descriptor inside the artwork. */}
-      <main className="pt-16 sm:pt-20">
+      {/* Every page opens on a full-bleed hero that runs under the floating
+          header, so each one owns its own top spacing. */}
+      {/* Each page eases in, so moving between them reads as one continuous
+          surface rather than a hard swap. */}
+      <motion.main
+        key={`${currentTab}:${blogSlug ?? ''}`}
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: EASE }}
+      >
         {currentTab === 'privacy' ? (
           <PrivacyPolicy
             onBackToHome={() => navigateToTab('home')}
@@ -153,7 +177,12 @@ export default function App() {
             activeSlug={blogSlug}
             onSelectPost={handleSelectPost}
             onBackToHome={() => navigateToTab('home')}
+            onOpenAudit={() => setAuditModalOpen(true)}
           />
+        ) : currentTab === 'students' ? (
+          <StudentPage />
+        ) : currentTab === 'schools' ? (
+          <SchoolPage onOpenAudit={() => setAuditModalOpen(true)} />
         ) : currentTab === 'home' ? (
           <>
             {/* 1. Hero Section */}
@@ -162,18 +191,33 @@ export default function App() {
               onOpenAudit={() => setAuditModalOpen(true)}
             />
 
-            {/* 2. Partner Schools & Trusted Institutions */}
+            {/* 2. Proof in three numbers */}
+            <ImpactStrip />
+
+            {/* 2b. The real thing: an actual marked answer sheet */}
+            <RealSheet />
+
+            {/* 3. Partner Schools & Trusted Institutions */}
             <PartnerSchools />
 
-            {/* 3. Target Users & Stakeholders */}
+            {/* 4. How it works */}
+            <HowItWorks />
+
+            {/* 5. Target Users & Stakeholders */}
             <TargetUsers onOpenAudit={() => setAuditModalOpen(true)} />
 
-            {/* 4. Enterprise Trust Architecture */}
+            {/* 6. Enterprise Trust Architecture */}
             <TrustAndSecurity />
+
+            {/* 7. Closing call to action */}
+            <FinalCTA
+              onOpenAudit={() => setAuditModalOpen(true)}
+              onExplore={() => handleScrollToSection('learning-gap-intelligence')}
+            />
           </>
         ) : (
           /* SEPARATE PAGE: Learning Gap Intelligence */
-          <div className="animate-in fade-in duration-300">
+          <div>
             {/* 1. Core Philosophy Narrative */}
             <PhilosophySection />
 
@@ -182,9 +226,16 @@ export default function App() {
 
             {/* 3. Usable Intelligence Dashboards */}
             <ProductShowcase onOpenAudit={() => setAuditModalOpen(true)} />
+
+            {/* 4. Closing call to action */}
+            <FinalCTA
+              onOpenAudit={() => setAuditModalOpen(true)}
+              onExplore={() => navigateToTab('home')}
+              exploreLabel="Back to the Overview"
+            />
           </div>
         )}
-      </main>
+      </motion.main>
 
       {/* Footer */}
       <Footer
@@ -192,6 +243,8 @@ export default function App() {
         onOpenAudit={() => setAuditModalOpen(true)}
         onOpenPrivacy={() => navigateToTab('privacy')}
         onOpenBlog={() => navigateToTab('blog')}
+        onOpenStudents={() => navigateToTab('students')}
+        onOpenSchools={() => navigateToTab('schools')}
         onScrollToSection={handleScrollToSection}
       />
 
@@ -210,20 +263,25 @@ export default function App() {
       />
 
       {/* Floating WhatsApp Quick Connect Button */}
-      <a
+      <motion.a
+        initial={{ opacity: 0, scale: 0.6, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ delay: 2.2, type: 'spring', stiffness: 260, damping: 20 }}
+        whileHover={{ scale: 1.06 }}
         href="https://wa.me/918981716969?text=Hi%20Classmap%20Team%2C%20I%20would%20like%20to%20learn%20more%20about%20Classmap."
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Connect on WhatsApp"
-        className="fixed bottom-6 right-6 z-50 p-3.5 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full shadow-xl hover:scale-110 transition-all flex items-center gap-2 group border-2 border-white"
+        className="group fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-full bg-[#25D366] p-3.5 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.25),0_18px_40px_-10px_rgba(37,211,102,0.7)] transition-colors hover:bg-[#20bd5a] sm:bottom-6 sm:right-6"
       >
+        <span aria-hidden="true" className="absolute inset-0 -z-10 animate-pulse-ring rounded-full bg-[#25D366]/50" />
         <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
           <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
         </svg>
         <span className="text-xs font-bold hidden sm:inline max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap pr-1">
           Chat on WhatsApp
         </span>
-      </a>
+      </motion.a>
 
       {/* Book Free Demo Modal */}
       <BookAuditModal

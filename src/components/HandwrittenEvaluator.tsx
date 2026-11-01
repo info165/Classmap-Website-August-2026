@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import {
   FileText,
   AlertTriangle,
@@ -8,347 +9,376 @@ import {
   Layers,
   RotateCcw,
   TrendingDown,
-  Building2,
-  CheckCircle2
+  ScanLine
 } from 'lucide-react';
 import { ANSWER_SHEET_SAMPLES, AnswerSheetSample } from '../data/mockData';
+import { CountUp, EASE, Reveal, ScrollTilt, SectionHeading, WipeIn } from './ui/primitives';
 
 interface HandwrittenEvaluatorProps {
   onOpenAudit: () => void;
 }
 
+/* One tone per annotation / layer type, defined whole so Tailwind can see the
+   class names at build time. */
+const ANNOTATION_TONE = {
+  concept: { ink: 'decoration-rose-500', chip: 'bg-rose-500/12 text-rose-700', note: 'bg-rose-50 text-rose-900 ring-rose-200' },
+  reasoning: { ink: 'decoration-amber-500', chip: 'bg-amber-500/15 text-amber-700', note: 'bg-amber-50 text-amber-900 ring-amber-200' },
+  presentation: { ink: 'decoration-sky-500', chip: 'bg-sky-500/12 text-sky-700', note: 'bg-sky-50 text-sky-900 ring-sky-200' },
+  positive: { ink: 'decoration-emerald-500', chip: 'bg-emerald-500/12 text-emerald-700', note: 'bg-emerald-50 text-emerald-900 ring-emerald-200' }
+} as const;
+
+const NODE_TONE = {
+  mastered: { bar: 'from-emerald-500 to-emerald-300', chip: 'bg-emerald-400/15 text-emerald-300', ring: 'ring-emerald-400/20' },
+  misconception: { bar: 'from-amber-500 to-amber-300', chip: 'bg-amber-400/15 text-amber-300', ring: 'ring-amber-400/20' },
+  gap: { bar: 'from-rose-500 to-rose-300', chip: 'bg-rose-400/15 text-rose-300', ring: 'ring-rose-400/20' }
+} as const;
+
+/** A dark layer card used for layers 1-4. */
+const Layer: React.FC<{
+  n: number;
+  title: string;
+  icon: React.ReactNode;
+  items: string[];
+  tone: 'rose' | 'amber' | 'sky' | 'violet';
+  delay?: number;
+}> = ({ n, title, icon, items, tone, delay = 0 }) => {
+  const t = {
+    rose: 'bg-rose-400/[0.08] ring-rose-400/20 text-rose-300',
+    amber: 'bg-amber-400/[0.08] ring-amber-400/20 text-amber-300',
+    sky: 'bg-sky-400/[0.08] ring-sky-400/20 text-sky-300',
+    violet: 'bg-violet-400/[0.08] ring-violet-400/20 text-violet-300'
+  }[tone];
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      whileHover={{ y: -3 }}
+      transition={{ duration: 0.55, delay, ease: EASE }}
+      className={`rounded-2xl p-4 ring-1 ring-inset ${t}`}
+    >
+      <div className="flex items-center gap-2 text-xs font-semibold">
+        {icon}
+        <span>
+          {n}. {title}
+        </span>
+      </div>
+      <ul className="mt-2.5 space-y-2 text-[13px] leading-relaxed text-stone-300">
+        {items.map((it, i) => (
+          <li key={i} className="flex gap-2">
+            <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-current opacity-70" />
+            <span>{it}</span>
+          </li>
+        ))}
+      </ul>
+    </motion.div>
+  );
+};
+
 export const HandwrittenEvaluator: React.FC<HandwrittenEvaluatorProps> = ({ onOpenAudit }) => {
   const [selectedSample, setSelectedSample] = useState<AnswerSheetSample>(ANSWER_SHEET_SAMPLES[0]);
   const [activeTab, setActiveTab] = useState<'intelligence' | 'conceptMap'>('intelligence');
+  const b = selectedSample.intelligenceBreakdown;
 
   return (
-    <section id="evaluator-demo" className="py-24 bg-[#FDFCFB] border-t border-[#EAE7DE]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center space-y-4 mb-14">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF0E6] text-[#FF6321] text-xs font-bold uppercase tracking-widest">
-            <FileText className="w-3.5 h-3.5" />
-            <span>AI Diagnostic Intelligence</span>
-          </div>
+    <section id="evaluator-demo" className="relative overflow-hidden bg-[#07080C] pb-16 pt-24 text-white sm:pb-20 sm:pt-32">
+      <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-[-6%] h-[620px] w-[1000px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(255,99,33,0.16),transparent)] blur-2xl" />
+      <div aria-hidden="true" className="bg-grid-dark pointer-events-none absolute inset-x-0 top-0 h-[900px] opacity-40" />
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-light text-[#1A1A1A] tracking-tight">
-            Handwritten Subjective Answer Evaluation
-          </h2>
+      <div className="relative mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="AI diagnostic intelligence"
+          eyebrowIcon={<FileText className="h-3.5 w-3.5" />}
+          tone="dark"
+          title="Handwritten subjective answer evaluation."
+          lede="Students write on traditional paper with pen. ClassMap parses handwritten reasoning step-by-step, uncovers hidden misconceptions, and maps conceptual gaps for schools and coaching institutes."
+        />
 
-          <p className="text-base sm:text-lg text-[#555] font-normal leading-relaxed">
-            Students write on traditional paper with pen. ClassMap parses handwritten reasoning step-by-step, uncover hidden misconceptions, and maps conceptual gaps for schools and coaching institutes.
-          </p>
-        </div>
-
-        {/* Sample Selection Buttons */}
-        <div className="flex flex-wrap items-center justify-center gap-3 mb-10">
-          <span className="text-xs font-bold text-[#8A877D] uppercase tracking-wider mr-2">
-            Select Sample Paper:
+        {/* Sample selector */}
+        <Reveal className="mt-12 flex flex-col items-center gap-3">
+          <span className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-stone-500">
+            Select a sample paper
           </span>
-          {ANSWER_SHEET_SAMPLES.map((sample) => (
-            <button
-              key={sample.id}
-              onClick={() => setSelectedSample(sample)}
-              className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-2 border ${
-                selectedSample.id === sample.id
-                  ? 'bg-[#1A1A1A] text-white border-[#1A1A1A] shadow-md scale-102'
-                  : 'bg-white text-[#555] border-[#E0DDD3] hover:bg-[#F5F3ED] hover:text-[#1A1A1A]'
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-[#FF6321]" />
-              <span>{sample.subject}</span>
-              <span className="text-[10px] font-mono opacity-80">({sample.grade})</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Interactive Evaluator Container */}
-        <div className="bg-white rounded-3xl border border-[#EEE] shadow-xl overflow-hidden">
-          {/* Top Inspector Bar */}
-          <div className="bg-[#1A1A1A] text-white px-6 py-4 flex flex-wrap items-center justify-between gap-4 border-b border-[#333]">
-            <div className="flex items-center gap-3">
-              <div className="w-3 h-3 rounded-full bg-[#FF6321]" />
-              <div>
-                <div className="text-sm font-bold tracking-wide">
-                  {selectedSample.subject} • {selectedSample.topic}
-                </div>
-                <div className="text-xs text-stone-400">
-                  Student: <span className="text-white font-medium">{selectedSample.studentName}</span> ({selectedSample.grade})
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs">
-              <div className="px-3 py-1 rounded-md bg-[#2B2B2B] text-stone-300 font-mono">
-                Traditional Score: <span className="text-stone-400 line-through font-bold ml-1">{selectedSample.traditionalMarks}</span>
-              </div>
-              <div className="px-3 py-1 rounded-full bg-[#FFF0E6] text-[#FF6321] font-bold">
-                ClassMap Verdict: Misconception Mapped
-              </div>
-            </div>
+          <div className="scrollbar-none flex max-w-full gap-1 overflow-x-auto rounded-full bg-white/[0.05] p-1.5 ring-1 ring-inset ring-white/[0.08]">
+            {ANSWER_SHEET_SAMPLES.map((sample) => {
+              const selected = selectedSample.id === sample.id;
+              return (
+                <button
+                  key={sample.id}
+                  onClick={() => setSelectedSample(sample)}
+                  className={`relative flex shrink-0 cursor-pointer items-center gap-2 rounded-full px-4 py-2.5 text-[13px] font-semibold tracking-tight transition-colors duration-300 sm:px-5 ${
+                    selected ? 'text-white' : 'text-stone-400 hover:text-white'
+                  }`}
+                >
+                  {selected && (
+                    <motion.span
+                      layoutId="sample-pill"
+                      transition={{ type: 'spring', stiffness: 420, damping: 36 }}
+                      className="absolute inset-0 rounded-full bg-[#FF6321]/90 shadow-[0_8px_24px_-8px_rgba(255,99,33,0.8)]"
+                    />
+                  )}
+                  <span className={`relative h-1.5 w-1.5 rounded-full ${selected ? 'bg-white' : 'bg-[#FF6321]'}`} />
+                  <span className="relative">{sample.subject}</span>
+                  <span className="relative font-mono text-[10px] opacity-70">{sample.grade}</span>
+                </button>
+              );
+            })}
           </div>
+        </Reveal>
 
-          {/* Main 2-Column Inspector Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[520px]">
-            {/* Left Column: Simulated Handwritten Document */}
-            <div className="lg:col-span-6 p-6 bg-[#FCFCFB] border-r border-[#F0F0F0] flex flex-col justify-between space-y-4">
-              <div>
-                <div className="flex items-center justify-between pb-3 border-b border-[#E5E2D8] mb-4">
-                  <span className="text-xs font-bold text-[#8A877D] uppercase tracking-wider flex items-center gap-1.5">
-                    <FileText className="w-3.5 h-3.5 text-[#FF6321]" />
-                    Original Student Script ({selectedSample.questionNumber})
+        {/* Inspector window */}
+        <ScrollTilt className="mt-8">
+          <div className="overflow-hidden rounded-[30px] bg-[#0B0D13] shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_60px_120px_-40px_rgba(255,99,33,0.3),0_40px_80px_-30px_rgba(0,0,0,0.9)]">
+            {/* Title bar */}
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.07] bg-white/[0.025] px-5 py-4 sm:px-7">
+              <div className="flex items-center gap-4">
+                <div className="hidden items-center gap-1.5 sm:flex">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#FF5F57]/80" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]/80" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#28C840]/80" />
+                </div>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedSample.id}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.25 }}
+                  >
+                    <div className="text-sm font-semibold tracking-tight text-white">
+                      {selectedSample.subject} <span className="text-stone-600">/</span> {selectedSample.topic}
+                    </div>
+                    <div className="text-xs text-stone-500">
+                      Student: <span className="font-medium text-stone-300">{selectedSample.studentName}</span> ({selectedSample.grade})
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+                <div className="rounded-full bg-white/[0.05] px-3 py-1.5 font-mono text-stone-400 ring-1 ring-inset ring-white/[0.07]">
+                  Traditional score{' '}
+                  <span className="ml-1 font-semibold text-stone-500 line-through">{selectedSample.traditionalMarks}</span>
+                </div>
+                <div className="flex items-center gap-2 rounded-full bg-[#FF6321]/12 px-3 py-1.5 font-semibold text-[#FF8A4C] ring-1 ring-inset ring-[#FF6321]/30">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-pulse-ring rounded-full bg-[#FF6321]/70" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-[#FF6321]" />
                   </span>
-                  <span className="text-xs font-semibold text-[#52504A] bg-[#EFECE6] px-2.5 py-1 rounded-md">
-                    Pen on Lined Paper
+                  <ScanLine className="h-3.5 w-3.5" />
+                  ClassMap: Misconception Mapped
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12">
+              {/* ---------------------------------------------------- script */}
+              <div className="border-b border-white/[0.07] p-5 sm:p-7 lg:col-span-6 lg:border-b-0 lg:border-r">
+                <div className="mb-4 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-stone-500">
+                    <FileText className="h-3.5 w-3.5 text-[#FF6321]" />
+                    Original student script · {selectedSample.questionNumber}
+                  </span>
+                  <span className="hidden rounded-full bg-white/[0.05] px-2.5 py-1 font-mono text-[10px] text-stone-400 sm:inline-block">
+                    Pen on lined paper
                   </span>
                 </div>
 
-                <p className="text-xs font-semibold text-[#1A1A1A] mb-3 bg-white p-3 rounded-xl border border-[#E5E2D8]">
-                  <span className="text-[#FF6321] font-bold">Question:</span> {selectedSample.questionText}
+                <p className="mb-4 rounded-2xl bg-white/[0.04] p-4 text-[13px] leading-relaxed text-stone-300 ring-1 ring-inset ring-white/[0.07]">
+                  <span className="font-semibold text-[#FF8A4C]">Question </span>
+                  {selectedSample.questionText}
                 </p>
 
-                {/* Handwritten Answer Paper Box */}
-                <div className="relative rounded-2xl overflow-hidden border border-[#DCD8CD] shadow-xs bg-[#FFFDF9] p-4 font-serif">
-                  <div className="absolute top-0 bottom-0 left-8 w-[1px] bg-red-300/60" />
-
-                  <div className="space-y-3.5 pl-6 text-sm text-[#1e293b]">
-                    <div className="font-sans text-xs text-[#64748b] italic border-b border-blue-100 pb-1">
-                      Student Handwritten Response Steps:
-                    </div>
-
-                    {selectedSample.teacherAnnotations.map((anno, idx) => (
-                      <div
-                        key={idx}
-                        className={`p-2.5 rounded-lg border text-xs font-mono transition-all ${
-                          anno.type === 'concept'
-                            ? 'bg-rose-50/80 border-rose-200 text-rose-900'
-                            : anno.type === 'reasoning'
-                            ? 'bg-amber-50/80 border-amber-200 text-amber-900'
-                            : anno.type === 'presentation'
-                            ? 'bg-blue-50/80 border-blue-200 text-blue-900'
-                            : 'bg-emerald-50/80 border-emerald-200 text-emerald-900'
-                        }`}
-                      >
-                        <div className="font-bold flex items-center justify-between">
-                          <span>{anno.line}</span>
-                          <span className="text-[10px] uppercase tracking-wider font-sans px-1.5 py-0.5 rounded bg-white/80">
-                            {anno.type}
-                          </span>
-                        </div>
-                        <div className="text-[11px] font-sans mt-1 opacity-90">
-                          ↳ <span className="font-medium">{anno.text}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Information Banner */}
-              <div className="p-3.5 rounded-2xl bg-[#FFF0E6] border border-[#FF6321]/20 flex items-center justify-between text-xs">
-                <span className="font-medium text-[#1A1A1A]">
-                  Evaluation configured for CBSE, ICSE, IB & State Board Rubrics
-                </span>
-                <span className="text-[10px] font-bold text-[#FF6321] uppercase tracking-wider">
-                  Automated Step Analysis
-                </span>
-              </div>
-            </div>
-
-            {/* Right Column: Intelligence Breakdown */}
-            <div className="lg:col-span-6 p-6 bg-white flex flex-col justify-between">
-              <div>
-                {/* View Tabs */}
-                <div className="flex items-center gap-2 pb-3 border-b border-[#F0ECE1] mb-5">
-                  <button
-                    onClick={() => setActiveTab('intelligence')}
-                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-colors cursor-pointer ${
-                      activeTab === 'intelligence'
-                        ? 'bg-[#FFF0E6] text-[#FF6321] border border-[#FF6321]/30'
-                        : 'text-[#6E6B63] hover:text-[#1A1A1A]'
-                    }`}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedSample.id}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4, ease: EASE }}
+                    className="relative overflow-hidden rounded-2xl bg-[#F6F1E4] p-5 pl-12 shadow-[inset_0_0_40px_rgba(120,90,40,0.12)]"
+                    style={{
+                      backgroundImage:
+                        'repeating-linear-gradient(to bottom, transparent 0, transparent 31px, rgba(80,110,170,0.2) 31px, rgba(80,110,170,0.2) 32px)'
+                    }}
                   >
-                    7-Layer Gap Intelligence
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('conceptMap')}
-                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-colors cursor-pointer ${
-                      activeTab === 'conceptMap'
-                        ? 'bg-[#FFF0E6] text-[#FF6321] border border-[#FF6321]/30'
-                        : 'text-[#6E6B63] hover:text-[#1A1A1A]'
-                    }`}
-                  >
-                    Concept Graph Node Map
-                  </button>
-                </div>
+                    <div className="absolute inset-y-0 left-9 w-px bg-rose-400/50" />
+                    {/* One scan on arrival */}
+                    <motion.div
+                      aria-hidden="true"
+                      initial={{ top: '0%', opacity: 1 }}
+                      animate={{ top: '100%', opacity: [1, 1, 0] }}
+                      transition={{ duration: 1.5, ease: EASE, delay: 0.2 }}
+                      className="pointer-events-none absolute inset-x-0 z-10"
+                    >
+                      <div className="h-px bg-[#FF6321] shadow-[0_0_16px_4px_rgba(255,99,33,0.8)]" />
+                      <div className="-mt-12 h-12 bg-gradient-to-t from-[#FF6321]/25 to-transparent" />
+                    </motion.div>
 
-                {activeTab === 'intelligence' && (
-                  <div className="space-y-4 animate-in fade-in duration-200">
-                    {/* Layer 1 & 2: Concept & Reasoning Gaps */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="p-3.5 rounded-xl bg-rose-50/60 border border-rose-200/80">
-                        <div className="text-xs font-bold text-rose-900 flex items-center gap-1.5 mb-1.5">
-                          <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
-                          <span>1. Concept Gaps</span>
-                        </div>
-                        <ul className="space-y-1 text-xs text-rose-950">
-                          {selectedSample.intelligenceBreakdown.conceptGaps.map((gap, i) => (
-                            <li key={i} className="flex items-start gap-1">
-                              <span className="text-rose-500 font-bold">•</span>
-                              <span>{gap}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      <div className="p-3.5 rounded-xl bg-amber-50/60 border border-amber-200/80">
-                        <div className="text-xs font-bold text-amber-900 flex items-center gap-1.5 mb-1.5">
-                          <Brain className="w-3.5 h-3.5 text-amber-600" />
-                          <span>2. Reasoning & Logic Flow</span>
-                        </div>
-                        <ul className="space-y-1 text-xs text-amber-950">
-                          {selectedSample.intelligenceBreakdown.reasoningFlaws.map((flaw, i) => (
-                            <li key={i} className="flex items-start gap-1">
-                              <span className="text-amber-500 font-bold">•</span>
-                              <span>{flaw}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-
-                    {/* Layer 3 & 4: Presentation & Misconception Pattern */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="p-3.5 rounded-xl bg-blue-50/60 border border-blue-200/80">
-                        <div className="text-xs font-bold text-blue-900 flex items-center gap-1.5 mb-1.5">
-                          <Layers className="w-3.5 h-3.5 text-blue-600" />
-                          <span>3. Presentation & Steps</span>
-                        </div>
-                        <ul className="space-y-1 text-xs text-blue-950">
-                          {selectedSample.intelligenceBreakdown.presentationFlaws.map((pf, i) => (
-                            <li key={i} className="flex items-start gap-1">
-                              <span className="text-blue-500 font-bold">•</span>
-                              <span>{pf}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      <div className="p-3.5 rounded-xl bg-purple-50/60 border border-purple-200/80">
-                        <div className="text-xs font-bold text-purple-900 flex items-center gap-1.5 mb-1.5">
-                          <RotateCcw className="w-3.5 h-3.5 text-purple-600" />
-                          <span>4. Misconception Pattern</span>
-                        </div>
-                        <ul className="space-y-1 text-xs text-purple-950">
-                          {selectedSample.intelligenceBreakdown.misconceptionPatterns.map((mp, i) => (
-                            <li key={i} className="flex items-start gap-1">
-                              <span className="text-purple-500 font-bold">•</span>
-                              <span>{mp}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-
-                    {/* Layer 5 & 6: Recurring Mistakes & Behavior */}
-                    <div className="p-3.5 rounded-xl bg-[#FAF9F6] border border-[#E2DFD4] space-y-2">
-                      <div className="text-xs font-bold text-[#12151C] flex items-center gap-1.5">
-                        <TrendingDown className="w-3.5 h-3.5 text-[#F95721]" />
-                        <span>5. Longitudinal Recurring Mistakes</span>
-                      </div>
-                      <p className="text-xs text-[#52504A]">
-                        {selectedSample.intelligenceBreakdown.recurringMistakes[0]}
-                      </p>
-                      <div className="text-[11px] text-[#706D63] italic">
-                        Behavior: {selectedSample.intelligenceBreakdown.learningBehavior}
-                      </div>
-                    </div>
-
-                    {/* Layer 7: Remedial Action */}
-                    <div className="p-4 rounded-xl bg-[#FFF2EE] border-l-4 border-[#F95721] space-y-1">
-                      <div className="text-xs font-bold text-[#D43D0C] flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-[#F95721]" />
-                        <span>7. Actionable Teacher & Student Remedy</span>
-                      </div>
-                      <p className="text-xs font-semibold text-[#12151C]">
-                        {selectedSample.intelligenceBreakdown.remedialAction}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {activeTab === 'conceptMap' && (
-                  <div className="space-y-4 animate-in fade-in duration-200">
-                    <div className="p-3 bg-[#FAF8F3] rounded-xl border border-[#E2DFD4] text-xs text-[#52504A]">
-                      Connected Concept Graph for <span className="font-bold text-[#12151C]">{selectedSample.topic}</span>:
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {selectedSample.conceptMapNodes.map((node, i) => (
-                        <div
-                          key={i}
-                          className={`p-4 rounded-xl border flex flex-col justify-between ${
-                            node.status === 'mastered'
-                              ? 'bg-emerald-50/60 border-emerald-200 text-emerald-950'
-                              : node.status === 'misconception'
-                              ? 'bg-amber-50/60 border-amber-200 text-amber-950'
-                              : 'bg-rose-50/60 border-rose-200 text-rose-950'
-                          }`}
-                        >
-                          <div>
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-xs font-bold">{node.concept}</span>
-                              <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
-                                node.status === 'mastered'
-                                  ? 'bg-emerald-200 text-emerald-900'
-                                  : node.status === 'misconception'
-                                  ? 'bg-amber-200 text-amber-900'
-                                  : 'bg-rose-200 text-rose-900'
-                              }`}>
-                                {node.status}
+                    <div className="relative space-y-5">
+                      {selectedSample.teacherAnnotations.map((anno, idx) => {
+                        const t = ANNOTATION_TONE[anno.type];
+                        return (
+                          <motion.div
+                            key={idx}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.5, delay: 0.3 + idx * 0.2, ease: EASE }}
+                          >
+                            <div className="flex items-start justify-between gap-3">
+                              <WipeIn
+                                delay={0.45 + idx * 0.2}
+                                duration={0.85}
+                                className={`font-hand text-[23px] font-semibold leading-tight text-[#1F2A44] underline decoration-[3px] decoration-wavy underline-offset-[6px] sm:text-[26px] ${t.ink}`}
+                              >
+                                {anno.line}
+                              </WipeIn>
+                              <span className={`mt-1.5 shrink-0 rounded-full px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider ${t.chip}`}>
+                                {anno.type}
                               </span>
                             </div>
-                            <div className="w-full bg-white/80 h-2 rounded-full overflow-hidden mt-3">
-                              <div
-                                className={`h-full ${
-                                  node.status === 'mastered'
-                                    ? 'bg-emerald-500'
-                                    : node.status === 'misconception'
-                                    ? 'bg-amber-500'
-                                    : 'bg-rose-500'
-                                }`}
-                                style={{ width: `${node.impactScore}%` }}
-                              />
+                            <div className={`mt-2.5 rounded-xl px-3 py-2 text-[12px] leading-relaxed ring-1 ring-inset ${t.note}`}>
+                              {anno.text}
                             </div>
-                          </div>
-
-                          <div className="text-[10px] text-stone-600 font-mono mt-2 text-right">
-                            Mastery Score: {node.impactScore}%
-                          </div>
-                        </div>
-                      ))}
+                          </motion.div>
+                        );
+                      })}
                     </div>
-                  </div>
-                )}
+                  </motion.div>
+                </AnimatePresence>
+
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-[#FF6321]/[0.08] px-4 py-3 text-xs ring-1 ring-inset ring-[#FF6321]/20">
+                  <span className="font-medium text-stone-200">
+                    Evaluation configured for CBSE, ICSE, IB &amp; State Board Rubrics
+                  </span>
+                  <span className="font-mono text-[10px] font-semibold uppercase tracking-wider text-[#FF8A4C]">
+                    Automated step analysis
+                  </span>
+                </div>
               </div>
 
-              {/* Bottom CTA Inside Evaluator Box */}
-              <div className="pt-6 mt-6 border-t border-[#F0ECE1] flex items-center justify-between">
-                <div className="text-xs text-[#706E66]">
-                  Supports Schools & Coaching Centres across India
+              {/* --------------------------------------------- intelligence */}
+              <div className="flex flex-col justify-between p-5 sm:p-7 lg:col-span-6">
+                <div>
+                  <div className="mb-5 inline-flex rounded-full bg-white/[0.05] p-1 ring-1 ring-inset ring-white/[0.07]">
+                    {(
+                      [
+                        ['intelligence', '7-Layer Gap Intelligence'],
+                        ['conceptMap', 'Concept Graph Node Map']
+                      ] as const
+                    ).map(([id, label]) => (
+                      <button
+                        key={id}
+                        onClick={() => setActiveTab(id)}
+                        className={`relative cursor-pointer rounded-full px-4 py-2 text-xs font-semibold transition-colors ${
+                          activeTab === id ? 'text-white' : 'text-stone-400 hover:text-stone-200'
+                        }`}
+                      >
+                        {activeTab === id && (
+                          <motion.span
+                            layoutId="eval-tab"
+                            transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                            className="absolute inset-0 rounded-full bg-[#FF6321] shadow-[0_8px_20px_-6px_rgba(255,99,33,0.8)]"
+                          />
+                        )}
+                        <span className="relative">{label}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  <AnimatePresence mode="wait">
+                    {activeTab === 'intelligence' ? (
+                      <motion.div
+                        key={`i-${selectedSample.id}`}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.35, ease: EASE }}
+                        className="space-y-3"
+                      >
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                          <Layer delay={0.05} n={1} title="Concept Gaps" tone="rose" icon={<AlertTriangle className="h-3.5 w-3.5" />} items={b.conceptGaps} />
+                          <Layer delay={0.13} n={2} title="Reasoning & Logic Flow" tone="amber" icon={<Brain className="h-3.5 w-3.5" />} items={b.reasoningFlaws} />
+                          <Layer delay={0.21} n={3} title="Presentation & Steps" tone="sky" icon={<Layers className="h-3.5 w-3.5" />} items={b.presentationFlaws} />
+                          <Layer delay={0.29} n={4} title="Misconception Pattern" tone="violet" icon={<RotateCcw className="h-3.5 w-3.5" />} items={b.misconceptionPatterns} />
+                        </div>
+
+                        <div className="rounded-2xl bg-white/[0.04] p-4 ring-1 ring-inset ring-white/[0.07]">
+                          <div className="flex items-center gap-2 text-xs font-semibold text-white">
+                            <TrendingDown className="h-3.5 w-3.5 text-[#FF6321]" />
+                            5. Longitudinal Recurring Mistakes
+                          </div>
+                          <p className="mt-2 text-[13px] leading-relaxed text-stone-300">{b.recurringMistakes[0]}</p>
+                          <p className="mt-2 text-xs italic text-stone-500">Behavior: {b.learningBehavior}</p>
+                        </div>
+
+                        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#FF6321]/25 to-[#FF6321]/[0.06] p-4 ring-1 ring-inset ring-[#FF6321]/40">
+                          <div className="flex items-center gap-2 text-xs font-semibold text-[#FFB27A]">
+                            <Sparkles className="h-3.5 w-3.5" />
+                            7. Actionable Teacher &amp; Student Remedy
+                          </div>
+                          <p className="mt-2 text-[13px] font-medium leading-relaxed text-white">{b.remedialAction}</p>
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key={`c-${selectedSample.id}`}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.35, ease: EASE }}
+                        className="space-y-3"
+                      >
+                        <div className="rounded-2xl bg-white/[0.04] p-3.5 text-xs text-stone-400 ring-1 ring-inset ring-white/[0.07]">
+                          Connected concept graph for <span className="font-semibold text-white">{selectedSample.topic}</span>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                          {selectedSample.conceptMapNodes.map((node, i) => {
+                            const t = NODE_TONE[node.status];
+                            return (
+                              <div key={node.concept} className={`flex flex-col justify-between rounded-2xl bg-white/[0.04] p-4 ring-1 ring-inset ${t.ring}`}>
+                                <div className="flex items-start justify-between gap-2">
+                                  <span className="text-[13px] font-semibold leading-snug text-white">{node.concept}</span>
+                                  <span className={`shrink-0 rounded-full px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider ${t.chip}`}>
+                                    {node.status}
+                                  </span>
+                                </div>
+                                <div className="mt-5">
+                                  <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.08]">
+                                    <motion.div
+                                      initial={{ width: 0 }}
+                                      animate={{ width: `${node.impactScore}%` }}
+                                      transition={{ duration: 1.1, delay: 0.15 + i * 0.1, ease: EASE }}
+                                      className={`h-full rounded-full bg-gradient-to-r ${t.bar}`}
+                                    />
+                                  </div>
+                                  <div className="mt-2 text-right font-mono text-[10px] text-stone-500">
+                                    Mastery score: <CountUp to={node.impactScore} suffix="%" duration={1100} className="text-stone-300" />
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
-                <button
-                  onClick={onOpenAudit}
-                  className="inline-flex items-center gap-2 text-xs font-bold text-[#FF6321] hover:text-[#E05215] cursor-pointer"
-                >
-                  <span>Book Demo For Your Institution</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+                <div className="mt-7 flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.07] pt-5">
+                  <div className="text-xs text-stone-500">Supports Schools &amp; Coaching Centres across India</div>
+                  <button
+                    onClick={onOpenAudit}
+                    className="group inline-flex cursor-pointer items-center gap-2 text-xs font-semibold text-[#FF8A4C] transition-colors hover:text-[#FFB27A]"
+                  >
+                    Book demo for your institution
+                    <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </ScrollTilt>
       </div>
     </section>
   );

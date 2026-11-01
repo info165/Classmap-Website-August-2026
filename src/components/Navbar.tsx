@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, Menu, X, User, ShieldCheck, GraduationCap, Building2, Users, Phone, Mail } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { ChevronDown, Menu, X, User, ShieldCheck, GraduationCap, Building2, Users, Phone, Mail, ArrowUpRight } from 'lucide-react';
 import { Logo } from './Logo';
+import { EASE, Magnetic } from './ui/primitives';
+
+type Tab = 'home' | 'learning-gap' | 'privacy' | 'blog' | 'students' | 'schools';
 
 interface NavbarProps {
   onOpenLogin: (role?: 'teacher' | 'student' | 'admin') => void;
@@ -8,33 +12,63 @@ interface NavbarProps {
   onScrollToSection: (sectionId: string) => void;
   // 'blog' is reachable from the footer only for now, but the header still
   // receives the current tab so it can clear its active states.
-  currentTab?: 'home' | 'learning-gap' | 'privacy' | 'blog';
-  onSelectTab?: (tab: 'home' | 'learning-gap' | 'privacy' | 'blog') => void;
+  currentTab?: Tab;
+  onSelectTab?: (tab: Tab) => void;
+  /** True on pages that open on paper rather than a dark hero (an article). */
+  lightHero?: boolean;
 }
+
+const PORTALS = [
+  { href: 'https://classmap.in/teachers', label: 'Teacher Login', icon: User },
+  { href: 'https://classmap.in/students', label: 'Student Login', icon: GraduationCap },
+  { href: 'https://classmap.in/admin', label: 'Admin Login', icon: ShieldCheck }
+];
 
 export const Navbar: React.FC<NavbarProps> = ({
   onOpenLogin,
   onOpenAudit,
   onScrollToSection,
   currentTab = 'home',
-  onSelectTab
+  onSelectTab,
+  lightHero = false
 }) => {
   const [scrolled, setScrolled] = useState(false);
   const [loginMenuOpen, setLoginMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  /* The bar steps out of the way on the way down the page and returns the moment
+     the reader scrolls back up. */
+  const [tucked, setTucked] = useState(false);
+
+  /* Every page opens on a dark hero, so the bar starts transparent with light
+     text. The one exception is an open article, which opens on paper. */
+  const onDarkPage = !lightHero;
+  const dark = onDarkPage || scrolled;
 
   useEffect(() => {
+    let last = window.scrollY;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      const y = window.scrollY;
+      setScrolled(y > 24);
+      if (y < 320) setTucked(false);
+      else if (y > last + 8) setTucked(true);
+      else if (y < last - 8) setTucked(false);
+      last = y;
     };
-    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleTabClick = (tab: 'home' | 'learning-gap' | 'privacy') => {
-    if (onSelectTab) {
-      onSelectTab(tab);
-    }
+  // Lock the page behind the open sheet.
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
+  const handleTabClick = (tab: 'home' | 'learning-gap' | 'privacy' | 'students' | 'schools') => {
+    onSelectTab?.(tab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setMobileMenuOpen(false);
   };
@@ -42,286 +76,276 @@ export const Navbar: React.FC<NavbarProps> = ({
   const handleNavScroll = (sectionId: string) => {
     if (currentTab !== 'home' && onSelectTab) {
       onSelectTab('home');
-      setTimeout(() => {
-        onScrollToSection(sectionId);
-      }, 100);
+      setTimeout(() => onScrollToSection(sectionId), 100);
     } else {
       onScrollToSection(sectionId);
     }
     setMobileMenuOpen(false);
   };
 
+  const linkBase =
+    'relative rounded-full px-3 py-2 text-[13px] font-medium tracking-tight transition-colors duration-200 cursor-pointer';
+  const linkTone = dark
+    ? 'text-stone-300 hover:text-white hover:bg-white/[0.07]'
+    : 'text-[#44423C] hover:text-[#1A1A1A] hover:bg-black/[0.045]';
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${
-        scrolled
-          ? 'bg-white/85 backdrop-blur-xl border-[#E2DED2] py-2.5 shadow-[0_4px_20px_-8px_rgba(26,26,26,0.16)]'
-          : 'bg-white border-[#EDEAE1] py-3 shadow-[0_1px_3px_rgba(26,26,26,0.04)]'
+      className={`fixed inset-x-0 top-0 z-50 px-3 pt-3 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-5 sm:pt-4 ${
+        tucked && !mobileMenuOpen && !loginMenuOpen ? '-translate-y-[140%]' : ''
       }`}
     >
-      {/* Full-bleed rather than the 80rem container the page sections use:
-          the brand sits against the left edge and the login control against
-          the right, instead of both floating inside a centred column with
-          empty gutters either side. */}
-      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12">
-        {/* From lg up this becomes a 1fr / auto / 1fr grid so the nav is
-            centred on the page itself. justify-between only centres the
-            middle group when the two side groups happen to be the same
-            width, and the brand is far wider than the login control.
+      <div
+        className={`mx-auto flex max-w-[1280px] items-center justify-between gap-3 rounded-[22px] px-3.5 py-2.5 transition-all duration-500 ease-out sm:px-5 ${
+          scrolled
+            ? dark
+              ? 'bg-[#0A0B10]/90 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_50px_-20px_rgba(0,0,0,0.7)]'
+              : 'bg-white/75 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_0_0_1px_rgba(26,26,26,0.07),0_20px_50px_-24px_rgba(26,26,26,0.3)]'
+            : 'bg-transparent shadow-[0_0_0_1px_rgba(255,255,255,0)]'
+        }`}
+      >
+        {/* Brand */}
+        <button
+          onClick={() => handleTabClick('home')}
+          className="group flex shrink-0 cursor-pointer items-center focus:outline-none"
+          aria-label="ClassMap Home"
+        >
+          <Logo size="md" />
+        </button>
 
-            Only from xl: between lg and xl the nav is wider than the middle
-            column can hold, and grid items overflow their track rather than
-            shrink, so it ran under the logo. */}
-        <div className="flex items-center justify-between gap-2 sm:gap-4 xl:grid xl:grid-cols-[1fr_auto_1fr]">
-          
-          {/* Brand Logo (Responsive height, single line on mobile) */}
+        {/* Desktop links */}
+        <nav className="hidden items-center gap-0.5 xl:flex">
           <button
-            onClick={() => handleTabClick('home')}
-            className="group flex items-center focus:outline-none cursor-pointer shrink-0"
-            aria-label="ClassMap Home"
+            onClick={() => handleTabClick('learning-gap')}
+            aria-current={currentTab === 'learning-gap' ? 'page' : undefined}
+            className={`${linkBase} ${
+              currentTab === 'learning-gap'
+                ? dark
+                  ? 'bg-white/10 text-white'
+                  : 'bg-black/[0.06] text-[#1A1A1A]'
+                : linkTone
+            }`}
           >
-            {/* Smaller than before so the logo-plus-tagline lockup still fits a
-                header-height bar rather than filling it. */}
-            <Logo size="md" />
+            Diagnostic Engine
           </button>
+          <button
+            onClick={() => handleTabClick('students')}
+            aria-current={currentTab === 'students' ? 'page' : undefined}
+            className={`${linkBase} ${
+              currentTab === 'students'
+                ? dark
+                  ? 'bg-white/10 text-white'
+                  : 'bg-black/[0.06] text-[#1A1A1A]'
+                : linkTone
+            }`}
+          >
+            For Students
+          </button>
+          <button
+            onClick={() => handleTabClick('schools')}
+            aria-current={currentTab === 'schools' ? 'page' : undefined}
+            className={`${linkBase} ${
+              currentTab === 'schools'
+                ? dark
+                  ? 'bg-white/10 text-white'
+                  : 'bg-black/[0.06] text-[#1A1A1A]'
+                : linkTone
+            }`}
+          >
+            For Schools
+          </button>
+          <button onClick={() => handleNavScroll('partners')} className={`${linkBase} ${linkTone}`}>
+            Partners
+          </button>
+          <button onClick={() => handleNavScroll('trust')} className={`${linkBase} ${linkTone}`}>
+            DPDP Trust &amp; Security
+          </button>
+        </nav>
 
-          {/* Desktop Center Navigation Links */}
-          <nav className="hidden lg:flex xl:justify-self-center items-center gap-1 xl:gap-2 text-xs font-semibold text-[#333]">
-            {/* Always a solid, raised surface — the pale outline it had before
-                read as a label rather than something to press. The current page
-                is shown as a pressed state instead of a different colour, which
-                is what makes the whole thing feel like a physical control. */}
+        {/* Desktop actions */}
+        <div className="hidden shrink-0 items-center gap-2 xl:flex">
+          <div className="relative">
             <button
-              onClick={() => handleTabClick('learning-gap')}
-              aria-current={currentTab === 'learning-gap' ? 'page' : undefined}
-              className={`group/diag relative select-none rounded-full border px-5 py-2.5 text-xs font-bold tracking-[0.01em] text-white transition-all duration-200 ease-out cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6321]/45 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
-                currentTab === 'learning-gap'
-                  // Pressed: darker, sunk into the surface, no ambient bloom.
-                  ? 'border-[#C9450B] bg-gradient-to-b from-[#EF5410] to-[#FF6E2E] translate-y-px shadow-[inset_0_2px_4px_rgba(140,48,8,0.45),0_1px_0_rgba(255,255,255,0.5)]'
-                  // Raised: lit top edge, tight contact shadow, soft accent bloom.
-                  : 'border-[#DB4C0E] bg-gradient-to-b from-[#FF8244] to-[#F0530F] shadow-[0_1px_2px_rgba(219,76,14,0.45),0_8px_20px_-8px_rgba(255,99,33,0.55),inset_0_1px_0_rgba(255,255,255,0.32)] hover:-translate-y-0.5 hover:from-[#FF8E54] hover:shadow-[0_2px_4px_rgba(219,76,14,0.4),0_14px_28px_-10px_rgba(255,99,33,0.65),inset_0_1px_0_rgba(255,255,255,0.38)] active:translate-y-px active:shadow-[inset_0_2px_4px_rgba(140,48,8,0.4)]'
-              }`}
+              onClick={() => setLoginMenuOpen(!loginMenuOpen)}
+              onBlur={() => setTimeout(() => setLoginMenuOpen(false), 200)}
+              aria-expanded={loginMenuOpen}
+              className={`${linkBase} flex items-center gap-1.5 ${linkTone}`}
             >
-              Diagnostic Engine
+              <User className="h-3.5 w-3.5" />
+              <span>Login</span>
+              <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-300 ${loginMenuOpen ? 'rotate-180' : ''}`} />
             </button>
 
-            <button
-              onClick={() => handleNavScroll('partners')}
-              className="px-3 py-2 rounded-full hover:bg-[#F3F0E6] text-[#444] hover:text-[#1A1A1A] transition-all cursor-pointer"
-            >
-              Partner Institutions
-            </button>
-
-            <button
-              onClick={() => handleNavScroll('solutions')}
-              className="px-3 py-2 rounded-full hover:bg-[#F3F0E6] text-[#444] hover:text-[#1A1A1A] transition-all cursor-pointer"
-            >
-              Who It's For
-            </button>
-
-            <button
-              onClick={() => handleNavScroll('trust')}
-              className="px-3 py-2 rounded-full hover:bg-[#F3F0E6] text-[#444] hover:text-[#1A1A1A] transition-all cursor-pointer"
-            >
-              DPDP Trust & Security
-            </button>
-
-            <button
-              onClick={() => handleTabClick('privacy')}
-              className={`px-3 py-2 rounded-full transition-all cursor-pointer ${
-                currentTab === 'privacy'
-                  ? 'bg-[#1A1A1A] text-white'
-                  : 'hover:bg-[#F3F0E6] text-[#444] hover:text-[#1A1A1A]'
-              }`}
-            >
-              Privacy Policy
-            </button>
-          </nav>
-
-          {/* Desktop Right Action Area */}
-          <div className="hidden lg:flex xl:justify-self-end items-center gap-3 shrink-0">
-            {/* Login Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setLoginMenuOpen(!loginMenuOpen)}
-                onBlur={() => setTimeout(() => setLoginMenuOpen(false), 250)}
-                className="px-4 py-2 bg-[#1A1A1A] hover:bg-[#333] text-white rounded-full flex items-center gap-1.5 transition-colors cursor-pointer text-xs font-bold"
-              >
-                <User className="w-3.5 h-3.5 text-[#FF6321]" />
-                <span>Login</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${loginMenuOpen ? 'rotate-180' : ''}`} />
-              </button>
-
+            <AnimatePresence>
               {loginMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-[#EEE] py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <div className="px-4 py-1.5 text-[10px] font-extrabold text-[#999] uppercase tracking-widest border-b border-[#F0F0F0]">
-                    Select Portal
+                <motion.div
+                  initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                  transition={{ duration: 0.18, ease: EASE }}
+                  className="absolute right-0 mt-3 w-56 origin-top-right overflow-hidden rounded-2xl bg-[#0F1117]/95 p-1.5 shadow-[0_0_0_1px_rgba(255,255,255,0.09),0_30px_60px_-20px_rgba(0,0,0,0.8)] backdrop-blur-2xl"
+                >
+                  <div className="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-500">
+                    Select portal
                   </div>
-
-                  <a
-                    href="https://classmap.in/teachers"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full text-left px-4 py-2.5 text-xs font-bold text-[#1A1A1A] hover:bg-[#FFF0E6] hover:text-[#FF6321] flex items-center gap-2 transition-colors"
-                  >
-                    <User className="w-4 h-4 text-[#FF6321]" />
-                    <span>Teacher Login</span>
-                  </a>
-
-                  <a
-                    href="https://classmap.in/students"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full text-left px-4 py-2.5 text-xs font-bold text-[#1A1A1A] hover:bg-[#FFF0E6] hover:text-[#FF6321] flex items-center gap-2 transition-colors"
-                  >
-                    <GraduationCap className="w-4 h-4 text-[#FF6321]" />
-                    <span>Student Login</span>
-                  </a>
-
-                  <a
-                    href="https://classmap.in/admin"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full text-left px-4 py-2.5 text-xs font-bold text-[#1A1A1A] hover:bg-[#FFF0E6] hover:text-[#FF6321] flex items-center gap-2 transition-colors"
-                  >
-                    <ShieldCheck className="w-4 h-4 text-[#FF6321]" />
-                    <span>Admin Login</span>
-                  </a>
-                </div>
+                  {PORTALS.map(({ href, label, icon: Icon }) => (
+                    <a
+                      key={href}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-[13px] font-medium text-stone-200 transition-colors hover:bg-white/[0.07] hover:text-white"
+                    >
+                      <Icon className="h-4 w-4 text-[#FF6321]" />
+                      <span className="flex-1">{label}</span>
+                      <ArrowUpRight className="h-3.5 w-3.5 text-stone-500 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#FF8A4C]" />
+                    </a>
+                  ))}
+                </motion.div>
               )}
-            </div>
+            </AnimatePresence>
           </div>
 
-          {/* Mobile Actions Header (Compact & Flawless) */}
-          <div className="flex lg:hidden items-center gap-2 shrink-0">
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-[#1A1A1A] hover:bg-[#EFECE6] transition-colors cursor-pointer"
-              aria-label="Toggle Mobile Navigation Menu"
+          <Magnetic strength={0.2}>
+            <motion.button
+              onClick={onOpenAudit}
+              whileTap={{ scale: 0.97 }}
+              className="cursor-pointer rounded-full bg-white px-5 py-2.5 text-[13px] font-semibold tracking-tight text-[#0A0B10] shadow-[0_0_0_1px_rgba(255,255,255,0.4),0_8px_24px_-8px_rgba(255,99,33,0.55)] transition-colors hover:bg-[#FFE9DC]"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
-
+              Book a Demo
+            </motion.button>
+          </Magnetic>
         </div>
 
-        {/* Mobile Navigation Sheet Drawer */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden mt-3 pt-3 border-t border-[#E5E2D8] bg-[#FAF9F6] rounded-2xl p-4 shadow-xl space-y-4 animate-in fade-in slide-in-from-top-2 duration-200 max-h-[85vh] overflow-y-auto">
-            
-            {/* Quick Diagnostic Engine Toggle */}
-            <div>
-              <button
-                onClick={() => handleTabClick('learning-gap')}
-                aria-current={currentTab === 'learning-gap' ? 'page' : undefined}
-                className={`w-full select-none rounded-xl border py-3 px-3 text-xs font-bold text-center tracking-[0.01em] text-white transition-all duration-200 ease-out ${
-                  currentTab === 'learning-gap'
-                    ? 'border-[#C9450B] bg-gradient-to-b from-[#EF5410] to-[#FF6E2E] shadow-[inset_0_2px_4px_rgba(140,48,8,0.45)]'
-                    : 'border-[#DB4C0E] bg-gradient-to-b from-[#FF8244] to-[#F0530F] shadow-[0_1px_2px_rgba(219,76,14,0.45),0_8px_20px_-8px_rgba(255,99,33,0.55),inset_0_1px_0_rgba(255,255,255,0.32)] active:translate-y-px active:shadow-[inset_0_2px_4px_rgba(140,48,8,0.4)]'
-                }`}
-              >
-                Diagnostic Engine
-              </button>
-            </div>
-
-            {/* Quick Scroll Links */}
-            <div className="space-y-1.5 pt-2 border-t border-[#EAE7DE]">
-              <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#888] px-1">
-                Explore Platform
-              </div>
-              
-              <button
-                onClick={() => handleNavScroll('partners')}
-                className="w-full text-left py-2 px-3 rounded-xl text-xs font-semibold text-[#1A1A1A] hover:bg-white flex items-center gap-2.5"
-              >
-                <Building2 className="w-4 h-4 text-[#FF6321]" />
-                <span>Partner Institutions & Boards</span>
-              </button>
-
-              <button
-                onClick={() => handleNavScroll('solutions')}
-                className="w-full text-left py-2 px-3 rounded-xl text-xs font-semibold text-[#1A1A1A] hover:bg-white flex items-center gap-2.5"
-              >
-                <Users className="w-4 h-4 text-[#FF6321]" />
-                <span>Solutions for Schools & Teachers</span>
-              </button>
-
-              <button
-                onClick={() => handleNavScroll('trust')}
-                className="w-full text-left py-2 px-3 rounded-xl text-xs font-semibold text-[#1A1A1A] hover:bg-white flex items-center gap-2.5"
-              >
-                <ShieldCheck className="w-4 h-4 text-[#FF6321]" />
-                <span>DPDP Act Data Protection</span>
-              </button>
-
-              <button
-                onClick={() => handleTabClick('privacy')}
-                className="w-full text-left py-2 px-3 rounded-xl text-xs font-semibold text-[#FF6321] hover:bg-white flex items-center gap-2.5"
-              >
-                <ShieldCheck className="w-4 h-4 text-[#FF6321]" />
-                <span>Privacy Policy & Governance</span>
-              </button>
-            </div>
-
-            {/* Role Login Buttons */}
-            <div className="pt-3 border-t border-[#EAE7DE] space-y-2">
-              <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#888] px-1">
-                Portal Login
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                <a
-                  href="https://classmap.in/teachers"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="py-2.5 px-1 text-[11px] font-bold bg-white border border-[#E0DDD3] rounded-xl text-center text-[#1A1A1A] hover:border-[#FF6321] hover:text-[#FF6321] transition-colors"
-                >
-                  Teachers
-                </a>
-                <a
-                  href="https://classmap.in/students"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="py-2.5 px-1 text-[11px] font-bold bg-white border border-[#E0DDD3] rounded-xl text-center text-[#1A1A1A] hover:border-[#FF6321] hover:text-[#FF6321] transition-colors"
-                >
-                  Students
-                </a>
-                <a
-                  href="https://classmap.in/admin"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="py-2.5 px-1 text-[11px] font-bold bg-white border border-[#E0DDD3] rounded-xl text-center text-[#1A1A1A] hover:border-[#FF6321] hover:text-[#FF6321] transition-colors"
-                >
-                  Admin
-                </a>
-              </div>
-            </div>
-
-            {/* Primary Action Button */}
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenAudit();
-              }}
-              className="w-full bg-[#FF6321] text-white py-3 rounded-xl text-xs font-bold text-center shadow-sm hover:bg-[#E05215] transition-colors cursor-pointer"
-            >
-              Book Free Institutional Demo
-            </button>
-
-            {/* Contact Information Footer */}
-            <div className="pt-2 border-t border-[#EAE7DE] flex items-center justify-between text-xs text-[#666] px-1">
-              <a href="tel:+918981716969" className="flex items-center gap-1.5 hover:text-[#FF6321] font-medium">
-                <Phone className="w-3.5 h-3.5 text-[#FF6321]" />
-                <span>+91-8981716969</span>
-              </a>
-              <a href="mailto:info@classmap.in" className="flex items-center gap-1.5 hover:text-[#FF6321] font-medium">
-                <Mail className="w-3.5 h-3.5 text-[#FF6321]" />
-                <span>info@classmap.in</span>
-              </a>
-            </div>
-
-          </div>
-        )}
+        {/* Mobile toggle */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-colors xl:hidden ${
+            dark ? 'text-white hover:bg-white/10' : 'text-[#1A1A1A] hover:bg-black/5'
+          }`}
+          aria-label="Toggle Mobile Navigation Menu"
+          aria-expanded={mobileMenuOpen}
+        >
+          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
       </div>
+
+      {/* Mobile sheet */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.3, ease: EASE }}
+            className="mx-auto mt-2 max-h-[calc(100dvh-6rem)] max-w-[1280px] overflow-y-auto rounded-[26px] bg-[#0A0B10]/95 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.09),0_40px_80px_-20px_rgba(0,0,0,0.8)] backdrop-blur-2xl xl:hidden"
+          >
+            <motion.div
+              initial="hidden"
+              animate="show"
+              variants={{ show: { transition: { staggerChildren: 0.05, delayChildren: 0.08 } } }}
+              className="space-y-5"
+            >
+              {[
+                <button
+                  key="diag"
+                  onClick={() => handleTabClick('learning-gap')}
+                  className="flex w-full items-center justify-between rounded-2xl bg-gradient-to-b from-[#FF7A3D] to-[#F0530F] px-5 py-4 text-left text-[15px] font-semibold text-white shadow-[0_12px_30px_-10px_rgba(255,99,33,0.7)]"
+                >
+                  <span>Diagnostic Engine</span>
+                  <ArrowUpRight className="h-4 w-4" />
+                </button>,
+
+                <button
+                  key="students"
+                  onClick={() => handleTabClick('students')}
+                  className="flex w-full items-center justify-between rounded-2xl bg-white/[0.06] px-5 py-4 text-left text-[15px] font-semibold text-white shadow-[0_0_0_1px_rgba(255,255,255,0.09)]"
+                >
+                  <span>For Students</span>
+                  <ArrowUpRight className="h-4 w-4 text-stone-400" />
+                </button>,
+
+                <button
+                  key="schools"
+                  onClick={() => handleTabClick('schools')}
+                  className="flex w-full items-center justify-between rounded-2xl bg-white/[0.06] px-5 py-4 text-left text-[15px] font-semibold text-white shadow-[0_0_0_1px_rgba(255,255,255,0.09)]"
+                >
+                  <span>For Schools</span>
+                  <ArrowUpRight className="h-4 w-4 text-stone-400" />
+                </button>,
+
+                <div key="explore" className="space-y-1">
+                  <div className="px-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-500">
+                    Explore platform
+                  </div>
+                  {[
+                    { id: 'partners', label: 'Partner Institutions & Boards', icon: Building2 },
+                    { id: 'solutions', label: 'Solutions for Schools & Teachers', icon: Users },
+                    { id: 'trust', label: 'DPDP Act Data Protection', icon: ShieldCheck }
+                  ].map(({ id, label, icon: Icon }) => (
+                    <button
+                      key={id}
+                      onClick={() => handleNavScroll(id)}
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-[15px] font-medium text-stone-200 transition-colors hover:bg-white/[0.06]"
+                    >
+                      <Icon className="h-4 w-4 text-[#FF6321]" />
+                      {label}
+                    </button>
+                  ))}
+                </div>,
+
+                <div key="login" className="space-y-2">
+                  <div className="px-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-500">
+                    Portal login
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {['teachers', 'students', 'admin'].map((p) => (
+                      <a
+                        key={p}
+                        href={`https://classmap.in/${p}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rounded-xl bg-white/[0.05] py-3 text-center text-[13px] font-medium capitalize text-stone-200 shadow-[0_0_0_1px_rgba(255,255,255,0.07)] transition-colors hover:bg-white/10 hover:text-white"
+                      >
+                        {p}
+                      </a>
+                    ))}
+                  </div>
+                </div>,
+
+                <button
+                  key="demo"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    onOpenAudit();
+                  }}
+                  className="w-full rounded-2xl bg-white py-4 text-center text-[15px] font-semibold text-[#0A0B10]"
+                >
+                  Book Free Institutional Demo
+                </button>,
+
+                <div key="contact" className="flex items-center justify-between border-t border-white/[0.07] px-1 pt-4 text-xs text-stone-400">
+                  <a href="tel:+918981716969" className="flex items-center gap-1.5 hover:text-white">
+                    <Phone className="h-3.5 w-3.5 text-[#FF6321]" />
+                    +91-8981716969
+                  </a>
+                  <a href="mailto:info@classmap.in" className="flex items-center gap-1.5 hover:text-white">
+                    <Mail className="h-3.5 w-3.5 text-[#FF6321]" />
+                    info@classmap.in
+                  </a>
+                </div>
+              ].map((el) => (
+                <motion.div
+                  key={el.key}
+                  variants={{ hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: EASE } } }}
+                >
+                  {el}
+                </motion.div>
+              ))}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };
