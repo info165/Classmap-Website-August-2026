@@ -2,7 +2,6 @@ import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import { GhostButton, PrimaryButton, Reveal, WordReveal } from '../ui/primitives';
 import { LoopStory } from './LoopStory';
-import { WhyClassMap } from './WhyClassMap';
 import { ColorReport } from './ColorReport';
 import { HandwrittenFlow } from './HandwrittenFlow';
 import { Faq, Pricing } from './PricingAndFaq';
@@ -22,7 +21,6 @@ export const StudentPage: React.FC = () => {
   return (
     <div className="bg-[#050507]">
       <LoopStory onStart={start} />
-      <WhyClassMap />
       <ColorReport />
       <HandwrittenFlow />
       <Pricing onStart={start} />

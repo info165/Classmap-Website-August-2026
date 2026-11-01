@@ -51,15 +51,6 @@ export const BANDS: Record<
   }
 };
 
-
-/** Real screenshots from the student app. Sizes are the files' own pixels. */
-export const SHOTS = {
-  level: { src: '/student/adaptive-level.webp', w: 1492, h: 516 },
-  chapters: { src: '/student/chapters.webp', w: 1572, h: 602 },
-  progress: { src: '/student/progress.webp', w: 1547, h: 407 },
-  plan: { src: '/student/study-plan.webp', w: 717, h: 226 }
-} as const;
-
 export const FAQ: { q: string; a: string }[] = [
   {
     q: 'How does ClassMap decide my next test?',
