@@ -10,7 +10,7 @@
 /** The live student portal. */
 export const STUDENT_PORTAL_URL = 'https://classmap.in/students';
 
-export const PRICE = 100;
+export const PRICE = 99;
 
 /** The three colours every report uses. Thresholds match the app's own bands. */
 export type Band = 'green' | 'yellow' | 'red';
@@ -70,7 +70,7 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: 'How much does it cost?',
-    a: 'For now, students get access for ₹100 a month.'
+    a: `For now, students get access for ₹${PRICE} a month.`
   }
 ];
 

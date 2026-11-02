@@ -244,17 +244,13 @@ export const ColorReport: React.FC = () => {
                     >
                       <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                         <span className="absolute inset-0 animate-pulse-ring rounded-full bg-white/40" />
-                        <span className="relative flex h-[72px] w-[72px] items-center justify-center rounded-full bg-white/95 shadow-[0_14px_40px_-8px_rgba(0,0,0,0.7)] backdrop-blur-sm transition-transform duration-500 group-hover:scale-110">
-                          <Play className="h-7 w-7 translate-x-0.5 fill-[#FF6321] text-[#FF6321]" />
+                        <span className="relative flex h-12 w-12 items-center justify-center rounded-full bg-white/95 sm:h-16 sm:w-16 shadow-[0_14px_40px_-8px_rgba(0,0,0,0.7)] backdrop-blur-sm transition-transform duration-500 group-hover:scale-110">
+                          <Play className="h-[18px] w-[18px] translate-x-0.5 fill-[#FF6321] text-[#FF6321] sm:h-6 sm:w-6" />
                         </span>
                       </span>
                       <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4 text-left">
-                        <span>
-                          <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-[#FFB27A]">Video lesson · {LESSON.subject}</span>
-                          <span className="mt-1 block text-[15px] font-semibold text-white">
-                            {LESSON.title}: {LESSON.subtitle.toLowerCase()}
-                          </span>
-                        </span>
+                        {/* The thumbnail already carries the lesson's title */}
+                        <span className="rounded-full bg-black/55 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-[#FFD2B0] backdrop-blur">Video lesson · {LESSON.subject}</span>
                         <span className="shrink-0 rounded-full bg-black/60 px-2.5 py-1 font-mono text-[11px] text-white backdrop-blur">{fmtTime(LESSON.duration)}</span>
                       </span>
                     </button>

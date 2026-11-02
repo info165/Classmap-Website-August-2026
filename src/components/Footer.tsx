@@ -150,10 +150,8 @@ export const Footer: React.FC<FooterProps> = ({
           <Reveal delay={0.08} className="lg:col-span-2 lg:col-start-7">
             <ColumnHeading>Platform</ColumnHeading>
             <ul className="space-y-4">
-              <li><FooterLink onClick={() => onScrollToSection('learning-gap-intelligence')}>Diagnostic Engine</FooterLink></li>
               {onOpenStudents && <li><FooterLink onClick={onOpenStudents}>For Students</FooterLink></li>}
               {onOpenSchools && <li><FooterLink onClick={onOpenSchools}>For Schools</FooterLink></li>}
-              <li><FooterLink onClick={() => onScrollToSection('solutions')}>Who it&rsquo;s for</FooterLink></li>
               <li><FooterLink onClick={() => onScrollToSection('partners')}>Partners</FooterLink></li>
               <li><FooterLink onClick={() => onScrollToSection('trust')}>Trust &amp; Security</FooterLink></li>
             </ul>

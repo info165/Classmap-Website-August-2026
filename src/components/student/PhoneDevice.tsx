@@ -3,6 +3,8 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { BatteryFull, FileBarChart2, Signal, Wifi } from 'lucide-react';
 import { EASE } from '../ui/primitives';
 import { SCENES } from './PhoneScenes';
+import { LaunchScene } from './LaunchScene';
+import { BEZEL, DH, DW, GROOVE, RIM, SCREEN_H, SCREEN_W } from './phoneMetrics';
 
 /**
  * The phone itself: titanium edge, island, status bar, story bar, and the
@@ -16,19 +18,12 @@ import { SCENES } from './PhoneScenes';
  */
 export const LOOP_LABELS = ['Topic', 'Test', 'Weak topics', 'Videos', 'Adaptive test', 'Report'];
 
-/** Design size, in CSS pixels before scaling. */
-const DW = 340;
-const RIM = 2; // titanium
-const GROOVE = 1.5; // the dark line between metal and glass
-const BEZEL = 9;
-const EDGE = RIM + GROOVE + BEZEL;
-const SCREEN_W = DW - EDGE * 2;
-const SCREEN_H = Math.round(SCREEN_W * (16.6 / 9));
-const DH = SCREEN_H + EDGE * 2;
-
 interface PhoneDeviceProps {
+  /** The step on screen, 0 to 5. -1 is before the app is open: the phone is
+   *  still on its home screen, then the app launches. */
   active: number;
-  /** 1 moving forward, -1 going back: the side a screen enters from. */
+  /** 1 moving forward, -1 going back: the side a screen enters from. 0 is a
+   *  crossfade, for the moment the app opens. */
   dir: number;
   /** Increments on every full round, so the first screen replays fresh. */
   loops: number;
@@ -38,11 +33,15 @@ interface PhoneDeviceProps {
   onUse: () => void;
   onNext: () => void;
   onSwipe: (by: 1 | -1) => void;
+  /** Seconds the launch waits, once the phone is on screen, before it starts. */
+  launchLead?: number;
+  /** A line shown on the launch screen once the app is open. */
+  launchHint?: string;
   /** Sets the rendered width; the height follows. */
   className?: string;
 }
 
-export const PhoneDevice: React.FC<PhoneDeviceProps> = ({ active, dir, loops, holdMs, paused, onUse, onNext, onSwipe, className = '' }) => {
+export const PhoneDevice: React.FC<PhoneDeviceProps> = ({ active, dir, loops, holdMs, paused, onUse, onNext, onSwipe, launchLead, launchHint, className = '' }) => {
   const reduce = useReducedMotion();
   const [island, setIsland] = useState(false);
   const [ripples, setRipples] = useState<{ id: number; x: number; y: number }[]>([]);
@@ -66,6 +65,10 @@ export const PhoneDevice: React.FC<PhoneDeviceProps> = ({ active, dir, loops, ho
 
   // The island opens with the step's name each time the screen changes.
   useEffect(() => {
+    if (active < 0) {
+      setIsland(false);
+      return;
+    }
     setIsland(true);
     const t = setTimeout(() => setIsland(false), 1700);
     return () => clearTimeout(t);
@@ -93,7 +96,8 @@ export const PhoneDevice: React.FC<PhoneDeviceProps> = ({ active, dir, loops, ho
     screenRef.current.style.setProperty('--gy', `${p.y}px`);
   };
 
-  const Scene = SCENES[active];
+  const Scene = active >= 0 ? SCENES[active] : null;
+  const inApp = active >= 0;
 
   return (
     <div ref={outerRef} className={`relative ${className}`} style={{ aspectRatio: `${DW} / ${DH}` }}>
@@ -162,8 +166,18 @@ export const PhoneDevice: React.FC<PhoneDeviceProps> = ({ active, dir, loops, ho
                   </span>
                 </div>
 
+                {/* Home screen, then the launch: before the app is open */}
+                <AnimatePresence>
+                  {!inApp && <LaunchScene key="launch" lead={launchLead} hint={launchHint} onOpen={() => { onUse(); onNext(); }} />}
+                </AnimatePresence>
+
                 {/* Story bar: the six steps of the loop */}
-                <div className="absolute inset-x-5 top-[54px] z-20 flex gap-1">
+                <motion.div
+                  initial={false}
+                  animate={{ opacity: inApp ? 1 : 0, y: inApp ? 0 : -10 }}
+                  transition={{ duration: 0.5, delay: inApp ? 0.25 : 0, ease: EASE }}
+                  className="absolute inset-x-5 top-[54px] z-20 flex gap-1"
+                >
                   {LOOP_LABELS.map((label, i) => (
                     <span key={label} className="relative h-[3px] flex-1 overflow-hidden rounded-full bg-white/15">
                       <motion.span
@@ -175,15 +189,20 @@ export const PhoneDevice: React.FC<PhoneDeviceProps> = ({ active, dir, loops, ho
                       />
                     </span>
                   ))}
-                </div>
+                </motion.div>
 
                 {/* App bar */}
-                <div className="absolute inset-x-5 top-[68px] z-20 flex items-center justify-between">
+                <motion.div
+                  initial={false}
+                  animate={{ opacity: inApp ? 1 : 0, y: inApp ? 0 : -10 }}
+                  transition={{ duration: 0.5, delay: inApp ? 0.32 : 0, ease: EASE }}
+                  className="absolute inset-x-5 top-[68px] z-20 flex items-center justify-between"
+                >
                   <span className="text-[13.5px] font-semibold tracking-[-0.02em] text-[#FF6321]">ClassMap</span>
                   <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-stone-400">
-                    Step {active + 1} of {n}
+                    Step {Math.max(active, 0) + 1} of {n}
                   </span>
-                </div>
+                </motion.div>
 
                 {/* Screens push in from the side you are moving towards. The
                     padding inside the clip leaves room for focus rings and
@@ -195,22 +214,24 @@ export const PhoneDevice: React.FC<PhoneDeviceProps> = ({ active, dir, loops, ho
                   }}
                 >
                   <AnimatePresence initial={false} custom={dir}>
-                    <motion.div
-                      key={`${active}-${loops}`}
-                      custom={dir}
-                      variants={{
-                        enter: (d: number) => ({ x: d > 0 ? '100%' : '-100%', opacity: 1 }),
-                        center: { x: 0, opacity: 1 },
-                        exit: (d: number) => ({ x: d > 0 ? '-30%' : '30%', opacity: 0 })
-                      }}
-                      initial="enter"
-                      animate="center"
-                      exit="exit"
-                      transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 340, damping: 36, mass: 0.9 }}
-                      className="absolute inset-0 flex items-center justify-center px-2 py-2"
-                    >
-                      <Scene onUse={onUse} onNext={onNext} />
-                    </motion.div>
+                    {Scene && (
+                      <motion.div
+                        key={`${active}-${loops}`}
+                        custom={dir}
+                        variants={{
+                          enter: (d: number) => (d === 0 ? { x: 0, opacity: 0, scale: 0.94 } : { x: d > 0 ? '100%' : '-100%', opacity: 1, scale: 1 }),
+                          center: { x: 0, opacity: 1, scale: 1 },
+                          exit: (d: number) => (d === 0 ? { x: 0, opacity: 0, scale: 0.97 } : { x: d > 0 ? '-30%' : '30%', opacity: 0, scale: 1 })
+                        }}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        transition={reduce ? { duration: 0 } : dir === 0 ? { duration: 0.6, delay: 0.15, ease: EASE } : { type: 'spring', stiffness: 340, damping: 36, mass: 0.9 }}
+                        className="absolute inset-0 flex items-center justify-center px-2 py-2"
+                      >
+                        <Scene onUse={onUse} onNext={onNext} />
+                      </motion.div>
+                    )}
                   </AnimatePresence>
                 </motion.div>
 

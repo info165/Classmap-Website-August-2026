@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { ChevronDown, Menu, X, User, ShieldCheck, GraduationCap, Building2, Users, Phone, Mail, ArrowUpRight } from 'lucide-react';
+import { ChevronDown, Menu, X, User, ShieldCheck, GraduationCap, Phone, Mail, ArrowUpRight } from 'lucide-react';
 import { Logo } from './Logo';
 import { EASE, Magnetic } from './ui/primitives';
 
-type Tab = 'home' | 'learning-gap' | 'privacy' | 'blog' | 'students' | 'schools';
+type Tab = 'home' | 'privacy' | 'blog' | 'students' | 'schools';
 
 interface NavbarProps {
   onOpenLogin: (role?: 'teacher' | 'student' | 'admin') => void;
@@ -23,6 +23,69 @@ const PORTALS = [
   { href: 'https://classmap.in/students', label: 'Student Login', icon: GraduationCap },
   { href: 'https://classmap.in/admin', label: 'Admin Login', icon: ShieldCheck }
 ];
+
+/**
+ * The two pages that carry the marketing: For Students and For Schools. They
+ * are set apart from every other control in the bar, and they hold perfectly
+ * still: a larger capsule with a gradient rim, deep glass inside, a warm light
+ * rising from its foot and a thin highlight along its crown. "For" is quiet and
+ * the audience is bold. Hover only brightens the light; the page you are on
+ * burns orange.
+ */
+const FlagshipLink: React.FC<{ lead: string; audience: string; active: boolean; onClick: () => void }> = ({ lead, audience, active, onClick }) => (
+  <button
+    onClick={onClick}
+    aria-current={active ? 'page' : undefined}
+    className={`group relative isolate cursor-pointer rounded-full p-px transition-[background,box-shadow] duration-500 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6321]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#07080C] ${
+      active
+        ? 'bg-gradient-to-b from-[#FFB27A] via-[#FF6321] to-[#E8520D] shadow-[0_12px_40px_-10px_rgba(255,99,33,0.75),0_0_0_4px_rgba(255,99,33,0.08)]'
+        : 'bg-gradient-to-b from-white/45 via-white/12 to-[#FF6321]/55 shadow-[0_10px_30px_-14px_rgba(255,99,33,0.4)] hover:from-[#FFD2B0] hover:via-[#FF8A4C]/60 hover:to-[#FF6321] hover:shadow-[0_14px_40px_-12px_rgba(255,99,33,0.65)]'
+    }`}
+  >
+    <span className="relative flex items-center gap-3 overflow-hidden rounded-full bg-[#0D0E14] px-[26px] py-[13px] text-[15.5px] tracking-tight">
+      {/* Warm light rising from the foot of the capsule */}
+      <span
+        aria-hidden="true"
+        className={`absolute inset-0 transition-opacity duration-500 ${
+          active ? 'opacity-100' : 'opacity-70 group-hover:opacity-100'
+        } bg-[radial-gradient(120%_150%_at_50%_135%,rgba(255,99,33,0.62),transparent_66%)]`}
+      />
+      {/* A thin highlight along the crown */}
+      <span aria-hidden="true" className="absolute inset-x-7 top-0 h-px bg-gradient-to-r from-transparent via-white/55 to-transparent" />
+      <span
+        aria-hidden="true"
+        className={`relative h-2 w-2 rounded-full transition-colors duration-500 ${
+          active ? 'bg-[#FF6321] shadow-[0_0_12px_3px_rgba(255,99,33,0.95)]' : 'bg-white/30 group-hover:bg-[#FF8A4C] group-hover:shadow-[0_0_10px_2px_rgba(255,138,76,0.7)]'
+        }`}
+      />
+      <span className="relative flex items-baseline gap-1.5">
+        <span className={`font-normal transition-colors duration-300 ${active ? 'text-[#FFD2B0]' : 'text-stone-400 group-hover:text-stone-100'}`}>{lead}</span>
+        <span className="font-semibold text-white">{audience}</span>
+      </span>
+    </span>
+  </button>
+);
+
+/** The same two links, as cards in the phone menu. */
+const FlagshipCard: React.FC<{ title: string; line: string; active: boolean; onClick: () => void }> = ({ title, line, active, onClick }) => (
+  <button
+    onClick={onClick}
+    aria-current={active ? 'page' : undefined}
+    className={`group relative flex w-full cursor-pointer items-center justify-between gap-4 overflow-hidden rounded-2xl px-5 py-4 text-left transition-all duration-300 ${
+      active
+        ? 'bg-gradient-to-br from-[#FF6321]/[0.28] to-[#FF6321]/[0.06] shadow-[0_0_0_1px_rgba(255,99,33,0.6),0_14px_34px_-12px_rgba(255,99,33,0.6)]'
+        : 'bg-white/[0.06] shadow-[0_0_0_1px_rgba(255,255,255,0.12)] active:bg-white/[0.1]'
+    }`}
+  >
+    <span className="min-w-0">
+      <span className="block text-[17px] font-semibold tracking-[-0.02em] text-white">{title}</span>
+      <span className="mt-0.5 block text-[12.5px] leading-snug text-stone-400">{line}</span>
+    </span>
+    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors duration-300 ${active ? 'bg-[#FF6321] text-white shadow-[0_8px_20px_-6px_rgba(255,99,33,0.8)]' : 'bg-white/[0.08] text-[#FF8A4C]'}`}>
+      <ArrowUpRight className="h-4 w-4" />
+    </span>
+  </button>
+);
 
 export const Navbar: React.FC<NavbarProps> = ({
   onOpenLogin,
@@ -67,19 +130,9 @@ export const Navbar: React.FC<NavbarProps> = ({
     };
   }, [mobileMenuOpen]);
 
-  const handleTabClick = (tab: 'home' | 'learning-gap' | 'privacy' | 'students' | 'schools') => {
+  const handleTabClick = (tab: 'home' | 'privacy' | 'students' | 'schools') => {
     onSelectTab?.(tab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    setMobileMenuOpen(false);
-  };
-
-  const handleNavScroll = (sectionId: string) => {
-    if (currentTab !== 'home' && onSelectTab) {
-      onSelectTab('home');
-      setTimeout(() => onScrollToSection(sectionId), 100);
-    } else {
-      onScrollToSection(sectionId);
-    }
     setMobileMenuOpen(false);
   };
 
@@ -96,7 +149,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       }`}
     >
       <div
-        className={`mx-auto flex max-w-[1280px] items-center justify-between gap-3 rounded-[22px] px-3.5 py-2.5 transition-all duration-500 ease-out sm:px-5 ${
+        className={`mx-auto flex max-w-[1280px] items-center justify-between gap-3 rounded-[22px] px-3.5 py-2.5 xl:grid xl:grid-cols-[1fr_auto_1fr] transition-all duration-500 ease-out sm:px-5 ${
           scrolled
             ? dark
               ? 'bg-[#0A0B10]/90 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_50px_-20px_rgba(0,0,0,0.7)]'
@@ -107,63 +160,20 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Brand */}
         <button
           onClick={() => handleTabClick('home')}
-          className="group flex shrink-0 cursor-pointer items-center focus:outline-none"
+          className="group flex shrink-0 cursor-pointer items-center justify-self-start focus:outline-none"
           aria-label="ClassMap Home"
         >
           <Logo size="md" />
         </button>
 
         {/* Desktop links */}
-        <nav className="hidden items-center gap-0.5 xl:flex">
-          <button
-            onClick={() => handleTabClick('learning-gap')}
-            aria-current={currentTab === 'learning-gap' ? 'page' : undefined}
-            className={`${linkBase} ${
-              currentTab === 'learning-gap'
-                ? dark
-                  ? 'bg-white/10 text-white'
-                  : 'bg-black/[0.06] text-[#1A1A1A]'
-                : linkTone
-            }`}
-          >
-            Diagnostic Engine
-          </button>
-          <button
-            onClick={() => handleTabClick('students')}
-            aria-current={currentTab === 'students' ? 'page' : undefined}
-            className={`${linkBase} ${
-              currentTab === 'students'
-                ? dark
-                  ? 'bg-white/10 text-white'
-                  : 'bg-black/[0.06] text-[#1A1A1A]'
-                : linkTone
-            }`}
-          >
-            For Students
-          </button>
-          <button
-            onClick={() => handleTabClick('schools')}
-            aria-current={currentTab === 'schools' ? 'page' : undefined}
-            className={`${linkBase} ${
-              currentTab === 'schools'
-                ? dark
-                  ? 'bg-white/10 text-white'
-                  : 'bg-black/[0.06] text-[#1A1A1A]'
-                : linkTone
-            }`}
-          >
-            For Schools
-          </button>
-          <button onClick={() => handleNavScroll('partners')} className={`${linkBase} ${linkTone}`}>
-            Partners
-          </button>
-          <button onClick={() => handleNavScroll('trust')} className={`${linkBase} ${linkTone}`}>
-            DPDP Trust &amp; Security
-          </button>
+        <nav className="hidden items-center gap-3 xl:flex">
+          <FlagshipLink lead="For" audience="Students" active={currentTab === 'students'} onClick={() => handleTabClick('students')} />
+          <FlagshipLink lead="For" audience="Schools" active={currentTab === 'schools'} onClick={() => handleTabClick('schools')} />
         </nav>
 
         {/* Desktop actions */}
-        <div className="hidden shrink-0 items-center gap-2 xl:flex">
+        <div className="hidden shrink-0 items-center gap-2 justify-self-end xl:flex">
           <div className="relative">
             <button
               onClick={() => setLoginMenuOpen(!loginMenuOpen)}
@@ -247,51 +257,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="space-y-5"
             >
               {[
-                <button
-                  key="diag"
-                  onClick={() => handleTabClick('learning-gap')}
-                  className="flex w-full items-center justify-between rounded-2xl bg-gradient-to-b from-[#FF7A3D] to-[#F0530F] px-5 py-4 text-left text-[15px] font-semibold text-white shadow-[0_12px_30px_-10px_rgba(255,99,33,0.7)]"
-                >
-                  <span>Diagnostic Engine</span>
-                  <ArrowUpRight className="h-4 w-4" />
-                </button>,
-
-                <button
-                  key="students"
-                  onClick={() => handleTabClick('students')}
-                  className="flex w-full items-center justify-between rounded-2xl bg-white/[0.06] px-5 py-4 text-left text-[15px] font-semibold text-white shadow-[0_0_0_1px_rgba(255,255,255,0.09)]"
-                >
-                  <span>For Students</span>
-                  <ArrowUpRight className="h-4 w-4 text-stone-400" />
-                </button>,
-
-                <button
-                  key="schools"
-                  onClick={() => handleTabClick('schools')}
-                  className="flex w-full items-center justify-between rounded-2xl bg-white/[0.06] px-5 py-4 text-left text-[15px] font-semibold text-white shadow-[0_0_0_1px_rgba(255,255,255,0.09)]"
-                >
-                  <span>For Schools</span>
-                  <ArrowUpRight className="h-4 w-4 text-stone-400" />
-                </button>,
-
-                <div key="explore" className="space-y-1">
-                  <div className="px-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-500">
-                    Explore platform
-                  </div>
-                  {[
-                    { id: 'partners', label: 'Partner Institutions & Boards', icon: Building2 },
-                    { id: 'solutions', label: 'Solutions for Schools & Teachers', icon: Users },
-                    { id: 'trust', label: 'DPDP Act Data Protection', icon: ShieldCheck }
-                  ].map(({ id, label, icon: Icon }) => (
-                    <button
-                      key={id}
-                      onClick={() => handleNavScroll(id)}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-[15px] font-medium text-stone-200 transition-colors hover:bg-white/[0.06]"
-                    >
-                      <Icon className="h-4 w-4 text-[#FF6321]" />
-                      {label}
-                    </button>
-                  ))}
+                <div key="main" className="space-y-3">
+                  <FlagshipCard title="For Students" line="Adaptive tests, clear reports and video lessons" active={currentTab === 'students'} onClick={() => handleTabClick('students')} />
+                  <FlagshipCard title="For Schools" line="Routine, teacher dashboards and AI grading" active={currentTab === 'schools'} onClick={() => handleTabClick('schools')} />
                 </div>,
 
                 <div key="login" className="space-y-2">

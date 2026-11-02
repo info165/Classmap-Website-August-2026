@@ -9,10 +9,6 @@ import { SchoolPage } from './components/school/SchoolPage';
 import { FinalCTA } from './components/FinalCTA';
 import { CursorGlow, EASE, ScrollProgress } from './components/ui/primitives';
 import { PartnerSchools } from './components/PartnerSchools';
-import { HandwrittenEvaluator } from './components/HandwrittenEvaluator';
-import { PhilosophySection } from './components/PhilosophySection';
-import { ProductShowcase } from './components/ProductShowcase';
-import { TargetUsers } from './components/TargetUsers';
 import { TrustAndSecurity } from './components/TrustAndSecurity';
 import { PrivacyPolicy } from './components/PrivacyPolicy';
 import { Blog } from './components/Blog';
@@ -23,7 +19,7 @@ import { WebsiteBillingModal } from './components/WebsiteBillingModal';
 import { PortalIframe } from './components/PortalIframe';
 import { motion } from 'motion/react';
 
-type Tab = 'home' | 'learning-gap' | 'privacy' | 'blog' | 'students' | 'schools';
+type Tab = 'home' | 'privacy' | 'blog' | 'students' | 'schools';
 
 /**
  * Every tab owns a URL. Previously only the blog pushed history, so switching
@@ -32,7 +28,6 @@ type Tab = 'home' | 'learning-gap' | 'privacy' | 'blog' | 'students' | 'schools'
  */
 const TAB_PATHS: Record<Tab, string> = {
   home: '/',
-  'learning-gap': '/diagnostic-engine',
   privacy: '/privacy-policy',
   blog: '/blog',
   // Not '/students': that path is the student portal itself.
@@ -41,7 +36,6 @@ const TAB_PATHS: Record<Tab, string> = {
 };
 
 const pathToTab = (path: string): Tab => {
-  if (path === TAB_PATHS['learning-gap']) return 'learning-gap';
   if (path === TAB_PATHS.privacy) return 'privacy';
   if (path === TAB_PATHS.students) return 'students';
   if (path === TAB_PATHS.schools) return 'schools';
@@ -76,6 +70,9 @@ export default function App() {
         return;
       }
       setActivePortal(null);
+
+      // The Diagnostic Engine page no longer exists; old links land on the home page.
+      if (path === '/diagnostic-engine') window.history.replaceState({}, '', '/');
 
       setCurrentTab(pathToTab(path));
       setBlogSlug(path.startsWith('/blog/') ? raw.slice('/blog/'.length) : null);
@@ -119,11 +116,6 @@ export default function App() {
   };
 
   const handleScrollToSection = (sectionId: string) => {
-    if (sectionId === 'learning-gap-intelligence' || sectionId === 'evaluator-demo' || sectionId === 'dashboards') {
-      navigateToTab('learning-gap');
-      return;
-    }
-
     if (currentTab !== 'home') {
       navigateToTab('home');
       setTimeout(() => {
@@ -183,13 +175,10 @@ export default function App() {
           <StudentPage />
         ) : currentTab === 'schools' ? (
           <SchoolPage onOpenAudit={() => setAuditModalOpen(true)} />
-        ) : currentTab === 'home' ? (
+        ) : (
           <>
             {/* 1. Hero Section */}
-            <Hero
-              onExploreEvaluator={() => handleScrollToSection('learning-gap-intelligence')}
-              onOpenAudit={() => setAuditModalOpen(true)}
-            />
+            <Hero onOpenAudit={() => setAuditModalOpen(true)} />
 
             {/* 2. Proof in three numbers */}
             <ImpactStrip />
@@ -203,37 +192,12 @@ export default function App() {
             {/* 4. How it works */}
             <HowItWorks />
 
-            {/* 5. Target Users & Stakeholders */}
-            <TargetUsers onOpenAudit={() => setAuditModalOpen(true)} />
-
-            {/* 6. Enterprise Trust Architecture */}
+            {/* 5. Enterprise Trust Architecture */}
             <TrustAndSecurity />
 
-            {/* 7. Closing call to action */}
-            <FinalCTA
-              onOpenAudit={() => setAuditModalOpen(true)}
-              onExplore={() => handleScrollToSection('learning-gap-intelligence')}
-            />
+            {/* 6. Closing call to action */}
+            <FinalCTA onOpenAudit={() => setAuditModalOpen(true)} />
           </>
-        ) : (
-          /* SEPARATE PAGE: Learning Gap Intelligence */
-          <div>
-            {/* 1. Core Philosophy Narrative */}
-            <PhilosophySection />
-
-            {/* 2. Handwritten Subjective Answer Evaluation */}
-            <HandwrittenEvaluator onOpenAudit={() => setAuditModalOpen(true)} />
-
-            {/* 3. Usable Intelligence Dashboards */}
-            <ProductShowcase onOpenAudit={() => setAuditModalOpen(true)} />
-
-            {/* 4. Closing call to action */}
-            <FinalCTA
-              onOpenAudit={() => setAuditModalOpen(true)}
-              onExplore={() => navigateToTab('home')}
-              exploreLabel="Back to the Overview"
-            />
-          </div>
         )}
       </motion.main>
 

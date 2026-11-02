@@ -70,7 +70,7 @@ export const EvaluationConsole: React.FC = () => {
           </div>
           <div className="flex items-center gap-2 font-mono text-[11px] tracking-tight text-stone-500">
             <ScanLine className="h-3.5 w-3.5 text-[#FF6321]" />
-            classmap / diagnostic-engine
+            classmap / evaluation
           </div>
           <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-stone-500">
             <span className="relative flex h-2 w-2">

@@ -4,12 +4,13 @@ import { PrimaryButton, GhostButton, Reveal, WordReveal } from './ui/primitives'
 
 interface FinalCTAProps {
   onOpenAudit: () => void;
-  onExplore: () => void;
+  /** An optional second button, beside the demo one. */
+  onExplore?: () => void;
   exploreLabel?: string;
 }
 
 /** The last thing a visitor sees before the footer, so it asks for one thing. */
-export const FinalCTA: React.FC<FinalCTAProps> = ({ onOpenAudit, onExplore, exploreLabel = 'Explore the Diagnostic Engine' }) => (
+export const FinalCTA: React.FC<FinalCTAProps> = ({ onOpenAudit, onExplore, exploreLabel = 'Back to the Overview' }) => (
   <section className="bg-[#07080C] px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
     <Reveal>
       <div className="noise relative isolate mx-auto max-w-[1280px] overflow-hidden rounded-[40px] bg-[#07080C] px-6 py-20 text-center text-white shadow-[0_60px_120px_-50px_rgba(255,99,33,0.55),0_0_0_1px_rgba(255,255,255,0.06)] sm:px-12 sm:py-28">
@@ -36,7 +37,7 @@ export const FinalCTA: React.FC<FinalCTAProps> = ({ onOpenAudit, onExplore, expl
               <span>Book a Free Demo</span>
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
             </PrimaryButton>
-            <GhostButton onClick={onExplore}>{exploreLabel}</GhostButton>
+            {onExplore && <GhostButton onClick={onExplore}>{exploreLabel}</GhostButton>}
           </div>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[13px] text-stone-500">

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react';
-import { ArrowRight, Hand, Play, Repeat2 } from 'lucide-react';
+import { ArrowRight, Hand, Play, Repeat2, Smartphone } from 'lucide-react';
 import { EASE, PrimaryButton, Reveal, Tilt3D, WordReveal } from '../ui/primitives';
 import { LOOP_LABELS, PhoneDevice } from './PhoneDevice';
 
@@ -23,7 +23,7 @@ const STEPS = [
   },
   {
     title: 'Choose a level. Take the test.',
-    body: 'Start where you feel comfortable; Medium is a good place to begin. You can also take a self-test whenever you like.',
+    body: 'Medium is already selected for you, so you can start straight away. You can also take a self-test whenever you like.',
     detail: 'Five levels, from easiest to hardest'
   },
   {
@@ -52,6 +52,8 @@ const STEPS = [
 const HALO = ['255,99,33', '255,99,33', '244,63,94', '255,120,50', '245,158,11', '16,185,129'];
 
 const HOLD = 4600;
+/** How long the app launch plays on a small screen before the first step. */
+const LAUNCH_HOLD = 5800;
 
 /* ------------------------------------------------------------------- intro */
 
@@ -144,11 +146,13 @@ const Intro: React.FC<{ onStart: () => void }> = ({ onStart }) => {
 /* ------------------------------------------------------------- pinned, wide */
 
 const PinnedLoop: React.FC<{ onStart: () => void }> = ({ onStart }) => {
-  const [active, setActive] = useState(0);
+  // -1 is the opening: the phone is on its home screen and opens the app.
+  const [active, setActive] = useState(-1);
   const [dir, setDir] = useState(1);
   const [loops, setLoops] = useState(0);
   const refs = useRef<(HTMLDivElement | null)[]>([]);
-  const activeRef = useRef(0);
+  const introRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef(-1);
 
   // The step crossing the middle of the screen is the one on the phone.
   useEffect(() => {
@@ -157,20 +161,23 @@ const PinnedLoop: React.FC<{ onStart: () => void }> = ({ onStart }) => {
         for (const e of entries) {
           if (!e.isIntersecting) continue;
           const i = Number((e.target as HTMLElement).dataset.step);
-          if (i === activeRef.current) continue;
-          setDir(i > activeRef.current ? 1 : -1);
+          const prev = activeRef.current;
+          if (i === prev) continue;
+          // Opening the app, or going back to its home screen, is a crossfade.
+          setDir(i < 0 || prev < 0 ? 0 : i > prev ? 1 : -1);
           activeRef.current = i;
           setActive(i);
         }
       },
       { rootMargin: '-50% 0px -50% 0px' }
     );
+    if (introRef.current) io.observe(introRef.current);
     refs.current.forEach((el) => el && io.observe(el));
     return () => io.disconnect();
   }, []);
 
   const goTo = (i: number) => {
-    const el = refs.current[i];
+    const el = i < 0 ? introRef.current : refs.current[i];
     if (!el) return;
     const r = el.getBoundingClientRect();
     window.scrollTo({ top: window.scrollY + r.top + r.height / 2 - window.innerHeight / 2, behavior: 'smooth' });
@@ -187,7 +194,7 @@ const PinnedLoop: React.FC<{ onStart: () => void }> = ({ onStart }) => {
     <div className="mx-auto hidden max-w-[1240px] grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-12 px-8 lg:grid">
       {/* The opening words, then the steps */}
       <div className="pb-[18vh]">
-        <div className="flex min-h-[100svh] items-center pb-10 pt-28">
+        <div ref={introRef} data-step={-1} className="flex min-h-[100svh] items-center pb-10 pt-28">
           <Intro onStart={onStart} />
         </div>
         {STEPS.map((s, i) => {
@@ -240,7 +247,7 @@ const PinnedLoop: React.FC<{ onStart: () => void }> = ({ onStart }) => {
           <motion.div
             aria-hidden="true"
             className="pointer-events-none absolute left-1/2 top-[48%] h-[760px] w-[760px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
-            animate={{ background: `radial-gradient(closest-side, rgba(${HALO[active]},0.34), rgba(${HALO[active]},0.07) 55%, transparent)` }}
+            animate={{ background: `radial-gradient(closest-side, rgba(${HALO[Math.max(active, 0)]},0.34), rgba(${HALO[Math.max(active, 0)]},0.07) 55%, transparent)` }}
             transition={{ duration: 0.9, ease: EASE }}
           />
           {/* A thin ring of light, turning slowly behind it */}
@@ -263,7 +270,9 @@ const PinnedLoop: React.FC<{ onStart: () => void }> = ({ onStart }) => {
                 loops={loops}
                 onUse={() => undefined}
                 onNext={next}
-                onSwipe={(by) => goTo(Math.min(STEPS.length - 1, Math.max(0, active + by)))}
+                onSwipe={(by) => goTo(Math.min(STEPS.length - 1, Math.max(-1, active + by)))}
+                launchLead={1.3}
+                launchHint="Scroll to begin"
                 className="w-[min(360px,calc((100svh-15rem)*0.56))]"
               />
             </Tilt3D>
@@ -273,7 +282,7 @@ const PinnedLoop: React.FC<{ onStart: () => void }> = ({ onStart }) => {
           <div className="relative mt-10 flex flex-col items-center gap-4">
             <div className="flex items-center gap-3 rounded-full bg-white/[0.045] py-1.5 pl-1.5 pr-5 shadow-[0_0_0_1px_rgba(255,255,255,0.09),0_20px_40px_-20px_rgba(0,0,0,0.9)] backdrop-blur-xl">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FF6321] font-mono text-[11px] font-semibold text-white shadow-[0_6px_16px_-4px_rgba(255,99,33,0.8)]">
-                0{active + 1}
+                {active < 0 ? <Smartphone className="h-3.5 w-3.5" /> : `0${active + 1}`}
               </span>
               <span className="relative h-5 w-[15.5rem] overflow-hidden">
                 <AnimatePresence mode="popLayout" initial={false}>
@@ -285,7 +294,7 @@ const PinnedLoop: React.FC<{ onStart: () => void }> = ({ onStart }) => {
                     transition={{ duration: 0.35, ease: EASE }}
                     className="absolute inset-0 truncate text-[14px] font-semibold leading-5 tracking-[-0.01em] text-white"
                   >
-                    {STEPS[active].title.replace(/\.$/, '')}
+                    {active < 0 ? 'Open the app' : STEPS[active].title.replace(/\.$/, '')}
                   </motion.span>
                 </AnimatePresence>
               </span>
@@ -310,7 +319,8 @@ const CompactLoop: React.FC = () => {
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.35 });
-  const [active, setActive] = useState(0);
+  // -1 is the opening: the phone opens the app, then the steps play.
+  const [active, setActive] = useState(-1);
   const [dir, setDir] = useState(1);
   const [loops, setLoops] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -318,20 +328,23 @@ const CompactLoop: React.FC = () => {
   useEffect(() => {
     if (!inView || paused || reduce) return;
     const t = setTimeout(() => {
-      setDir(1);
+      setDir(active < 0 ? 0 : 1);
       setActive((a) => {
         if (a === STEPS.length - 1) setLoops((l) => l + 1);
-        return (a + 1) % STEPS.length;
+        return a === STEPS.length - 1 ? 0 : a + 1;
       });
-    }, HOLD);
+    }, active < 0 ? LAUNCH_HOLD : HOLD);
     return () => clearTimeout(t);
   }, [active, inView, paused, reduce]);
 
   const step = (by: number) => {
-    setDir(by);
+    setDir(active < 0 || (by < 0 && active === 0) ? 0 : by);
     setActive((a) => {
-      if (by > 0 && a === STEPS.length - 1) setLoops((l) => l + 1);
-      return (a + by + STEPS.length) % STEPS.length;
+      if (by > 0 && a === STEPS.length - 1) {
+        setLoops((l) => l + 1);
+        return 0;
+      }
+      return a + by < -1 ? STEPS.length - 1 : a + by;
     });
     setPaused(true);
   };
@@ -349,6 +362,7 @@ const CompactLoop: React.FC = () => {
           onUse={() => setPaused(true)}
           onNext={() => step(1)}
           onSwipe={step}
+          launchLead={0.4}
           className="w-[min(330px,86vw)]"
         />
       </div>
@@ -357,16 +371,16 @@ const CompactLoop: React.FC = () => {
       </p>
 
       <div className="mx-auto mt-10 max-w-md">
-        <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#FF8A4C]">Step {active + 1} of {STEPS.length}</div>
+        <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#FF8A4C]">{active < 0 ? 'Opening the app' : `Step ${active + 1} of ${STEPS.length}`}</div>
         <div className="mt-3 grid">
-          {STEPS.map((s, i) => (
+          {[{ title: 'Open the app.', body: 'Tap the ClassMap icon, and your first round begins.' }, ...STEPS].map((s, j) => (
             <motion.div
               key={s.title}
-              aria-hidden={i !== active}
+              aria-hidden={j - 1 !== active}
               initial={false}
-              animate={{ opacity: i === active ? 1 : 0, y: i === active ? 0 : 10 }}
+              animate={{ opacity: j - 1 === active ? 1 : 0, y: j - 1 === active ? 0 : 10 }}
               transition={{ duration: 0.3, ease: EASE }}
-              className={`col-start-1 row-start-1 ${i === active ? '' : 'pointer-events-none'}`}
+              className={`col-start-1 row-start-1 ${j - 1 === active ? '' : 'pointer-events-none'}`}
             >
               <h3 className="text-[2rem] font-semibold leading-[1.05] tracking-[-0.04em] text-white">{s.title}</h3>
               <p className="mt-3 text-[16px] leading-relaxed text-stone-400">{s.body}</p>

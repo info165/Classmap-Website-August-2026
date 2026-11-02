@@ -3,10 +3,9 @@ import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react'
 import { ArrowRight, ShieldCheck, Building2, Camera, ChevronDown } from 'lucide-react';
 import { EvaluationConsole } from './EvaluationConsole';
 import { SilkField } from './ui/SilkField';
-import { EASE, Eyebrow, GhostButton, PrimaryButton, Tilt3D, WordReveal } from './ui/primitives';
+import { EASE, Eyebrow, PrimaryButton, Tilt3D, WordReveal } from './ui/primitives';
 
 interface HeroProps {
-  onExploreEvaluator: () => void;
   onOpenAudit: () => void;
 }
 
@@ -18,7 +17,7 @@ const CREDENTIALS = [
   { label: 'No hardware or OMR sheets', icon: Camera }
 ];
 
-export const Hero: React.FC<HeroProps> = ({ onExploreEvaluator, onOpenAudit }) => {
+export const Hero: React.FC<HeroProps> = ({ onOpenAudit }) => {
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
   // The background drifts slower than the page, which is what gives it depth.
@@ -89,9 +88,6 @@ export const Hero: React.FC<HeroProps> = ({ onExploreEvaluator, onOpenAudit }) =
               <span>Book a Free Demo</span>
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
             </PrimaryButton>
-            <GhostButton onClick={onExploreEvaluator}>
-              <span>Explore the Diagnostic Engine</span>
-            </GhostButton>
           </motion.div>
 
           <motion.ul

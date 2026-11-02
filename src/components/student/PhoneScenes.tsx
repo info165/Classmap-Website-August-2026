@@ -113,20 +113,23 @@ export const TopicScene: React.FC<SceneProps> = ({ onUse, onNext }) => {
 
 /* ------------------------------------------------- 2. choose a level and test */
 
-const LEVEL_NAMES: Record<number, string> = { 1: 'Easiest', 3: 'Medium', 5: 'Hardest' };
 const OPTIONS = ['CO₂', 'N₂', 'O₂', 'H₂'];
 const CORRECT = 2;
+/** Medium is already chosen when the test screen opens, so it is shown as is. */
+const DEFAULT_LEVEL = 3;
+const LEVEL_NAME = 'Medium';
 
 export const TestScene: React.FC<SceneProps> = ({ onUse }) => {
   const [phase, setPhase] = useState<'level' | 'question'>('level');
-  const [lvl, setLvl] = useState(1);
   const [pick, setPick] = useState<number | null>(null);
+  const [pressed, setPressed] = useState(false);
   const touched = useRef(false);
 
+  // The level is already Medium: the child starts the test and answers.
   useEffect(() => {
-    const a = setTimeout(() => !touched.current && setLvl(3), 650);
-    const b = setTimeout(() => !touched.current && setPhase('question'), 1700);
-    const c = setTimeout(() => !touched.current && setPick(CORRECT), 2700);
+    const a = setTimeout(() => !touched.current && setPressed(true), 1700);
+    const b = setTimeout(() => !touched.current && setPhase('question'), 2100);
+    const c = setTimeout(() => !touched.current && setPick(CORRECT), 3100);
     return () => [a, b, c].forEach(clearTimeout);
   }, []);
 
@@ -142,40 +145,37 @@ export const TestScene: React.FC<SceneProps> = ({ onUse }) => {
               <div className="mt-1 text-xl font-semibold tracking-[-0.03em] text-white">Photosynthesis</div>
             </Card>
             <Card className="p-4">
-              <Label>Start at level</Label>
-              <div className="mt-3 grid grid-cols-5 gap-2">
-                {[1, 2, 3, 4, 5].map((l) => (
-                  <motion.button
-                    key={l}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => {
-                      touched.current = true;
-                      setLvl(l);
-                      onUse();
-                    }}
-                    aria-pressed={l === lvl}
-                    aria-label={`Level ${l}`}
-                    className="relative cursor-pointer rounded-xl py-3 text-center text-sm font-semibold tabular-nums"
-                  >
-                    {l === lvl ? (
-                      <motion.span layoutId="test-level" transition={{ type: 'spring', stiffness: 520, damping: 38 }} className="absolute inset-0 rounded-xl bg-[#FF6321] shadow-[0_10px_26px_-8px_rgba(255,99,33,0.8)]" />
-                    ) : (
-                      <span className="absolute inset-0 rounded-xl bg-white/[0.04]" />
-                    )}
-                    <span className={`relative ${l === lvl ? 'text-white' : 'text-stone-500'}`}>L{l}</span>
-                  </motion.button>
-                ))}
+              <Label>Your level</Label>
+              <div className="mt-2.5 flex items-center justify-between">
+                <motion.span
+                  initial={{ opacity: 0, y: 8, scale: 0.94 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: 0.15, type: 'spring', stiffness: 380, damping: 24 }}
+                  className="text-[1.65rem] font-semibold leading-none tracking-[-0.04em] text-white"
+                >
+                  {LEVEL_NAME}
+                </motion.span>
+                <motion.span
+                  initial={{ opacity: 0, scale: 0.7 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.45, type: 'spring', stiffness: 460, damping: 20 }}
+                  className="flex items-center gap-1.5 rounded-full bg-[#FF6321]/15 px-3 py-1.5 font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[#FF8A4C] ring-1 ring-inset ring-[#FF6321]/35"
+                >
+                  <Check className="h-3 w-3" strokeWidth={3.5} />
+                  Default
+                </motion.span>
               </div>
-              <div className="mt-2 h-4 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-[#FF8A4C]">{LEVEL_NAMES[lvl] ?? `Level ${lvl}`}</div>
             </Card>
-            <Cta onClick={() => { touched.current = true; onUse(); setPhase('question'); }}>
-              Start the test <ArrowRight className="h-4 w-4" />
-            </Cta>
+            <motion.div animate={{ scale: pressed ? 0.95 : 1 }} transition={{ duration: 0.2, ease: EASE }}>
+              <Cta onClick={() => { touched.current = true; onUse(); setPhase('question'); }}>
+                Start the test <ArrowRight className="h-4 w-4" />
+              </Cta>
+            </motion.div>
           </motion.div>
         ) : (
           <motion.div key="q" initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }} transition={{ duration: 0.25, ease: EASE }} className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label>Level 3 · Question 1 of 10</Label>
+              <Label>Level {DEFAULT_LEVEL} · Question 1 of 10</Label>
               <div className="h-1 w-16 overflow-hidden rounded-full bg-white/10">
                 <div className="h-full w-[10%] rounded-full bg-[#FF6321]" />
               </div>
