@@ -11,6 +11,8 @@
 export const STUDENT_PORTAL_URL = 'https://classmap.in/students';
 
 export const PRICE = 99;
+/** The regular price, shown struck through beside the offer price. */
+export const MRP = 199;
 
 /** The three colours every report uses. Thresholds match the app's own bands. */
 export type Band = 'green' | 'yellow' | 'red';
@@ -70,7 +72,7 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: 'How much does it cost?',
-    a: `For now, students get access for ₹${PRICE} a month.`
+    a: `₹${PRICE} a month, for now. That is our offer price, down from the usual ₹${MRP}.`
   }
 ];
 

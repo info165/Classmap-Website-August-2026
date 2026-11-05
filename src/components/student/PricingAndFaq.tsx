@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ArrowRight, Check, Plus } from 'lucide-react';
 import { CountUp, EASE, Eyebrow, GlowCard, PrimaryButton, Reveal } from '../ui/primitives';
-import { FAQ, PRICE } from './data';
+import { FAQ, MRP, PRICE } from './data';
 
 const INCLUDED = [
   'Adaptive tests that move up or down with your score',
@@ -44,13 +44,40 @@ export const Pricing: React.FC<PricingProps> = ({ onStart }) => (
         >
           <div className="relative z-10">
             <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-[#FF8A4C]">For students, for now</div>
-            <div className="mt-6 flex items-start justify-center gap-1">
+
+            {/* The regular price, struck through by a line of orange light */}
+            <div className="mt-7 flex items-center justify-center gap-3">
+              <span className="relative inline-block text-[2.4rem] font-medium tracking-[-0.035em] text-stone-500">
+                <span className="mr-1 text-[1.5rem] align-[0.2em]">₹</span>
+                {MRP}
+                <motion.span
+                  aria-hidden="true"
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.5, duration: 0.7, ease: EASE }}
+                  className="absolute -left-2 -right-2 top-1/2 h-[2px] origin-left -rotate-[8deg] rounded-full bg-gradient-to-r from-[#FF6321] via-[#FF8A4C] to-[#FF6321] shadow-[0_0_12px_rgba(255,99,33,0.8)]"
+                />
+                <span className="sr-only">Regular price</span>
+              </span>
+              <motion.span
+                initial={{ opacity: 0, x: -8 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 1.0, duration: 0.6, ease: EASE }}
+                className="rounded-full bg-[#FF6321]/[0.12] px-3 py-1 font-mono text-[10.5px] uppercase tracking-[0.18em] text-[#FF8A4C] shadow-[inset_0_0_0_1px_rgba(255,99,33,0.35)]"
+              >
+                Save ₹{MRP - PRICE}
+              </motion.span>
+            </div>
+
+            <div className="mt-2 flex items-start justify-center gap-1">
               <span className="mt-3 text-3xl font-semibold text-stone-400">₹</span>
               <span className="text-gradient-light text-[6.5rem] font-semibold leading-none tracking-[-0.07em]">
                 <CountUp to={PRICE} duration={1600} />
               </span>
             </div>
-            <div className="mt-1 text-base text-stone-400">a month</div>
+            <div className="mt-1 text-base text-stone-400">a month <span className="text-stone-500">· offer price</span></div>
 
             <ul className="mx-auto mt-9 max-w-sm space-y-3.5 text-left">
               {INCLUDED.map((t, i) => (

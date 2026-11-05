@@ -43,7 +43,8 @@ export const StudentPage: React.FC = () => {
 
             <Reveal delay={0.2}>
               <p className="mx-auto mt-7 max-w-xl text-pretty text-base leading-relaxed text-stone-400 sm:text-lg">
-                Adaptive tests, clear reports, video lessons and AI-graded answers, for ₹{PRICE} a month.
+                Adaptive tests, clear reports, video lessons and AI-graded answers. Now at the offer price of{' '}
+                <span className="whitespace-nowrap font-semibold text-white">₹{PRICE} a month</span>.
               </p>
             </Reveal>
 
