@@ -227,6 +227,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Magnetic strength={0.2}>
               <motion.a
                 href={STUDENT_ASSESSMENT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 whileTap={{ scale: 0.97 }}
                 className="mr-2 inline-block cursor-pointer rounded-full bg-gradient-to-b from-[#FF7A3D] to-[#F0530F] px-5 py-2.5 text-[13px] font-semibold tracking-tight text-white shadow-[0_0_0_1px_rgba(255,255,255,0.18),0_10px_26px_-8px_rgba(255,99,33,0.75)] transition-all hover:brightness-110"
               >
@@ -306,6 +308,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <a
                     key="demo"
                     href={STUDENT_ASSESSMENT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                     className="block w-full rounded-2xl bg-gradient-to-b from-[#FF7A3D] to-[#F0530F] py-4 text-center text-[15px] font-semibold text-white shadow-[0_12px_30px_-10px_rgba(255,99,33,0.8)]"
                   >
                     Start assessment
