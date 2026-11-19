@@ -87,6 +87,9 @@ const FlagshipCard: React.FC<{ title: string; line: string; active: boolean; onC
   </button>
 );
 
+/** Where "Start assessment" goes: the student portal. */
+const STUDENT_ASSESSMENT_URL = 'https://student.classmap.in/';
+
 export const Navbar: React.FC<NavbarProps> = ({
   onOpenLogin,
   onOpenAudit,
@@ -102,10 +105,11 @@ export const Navbar: React.FC<NavbarProps> = ({
      the reader scrolls back up. */
   const [tucked, setTucked] = useState(false);
 
-  /* Every page opens on a dark hero, so the bar starts transparent with light
-     text. The one exception is an open article, which opens on paper. */
-  const onDarkPage = !lightHero;
-  const dark = onDarkPage || scrolled;
+  /* Most pages are dark, so the bar is dark glass with light text. A light page
+     (an open article, the For Students page) keeps a light bar all the way down. */
+  const dark = !lightHero;
+  // On the For Students page the header's main button starts an assessment instead of booking a demo.
+  const onStudentsPage = currentTab === 'students';
 
   useEffect(() => {
     let last = window.scrollY;
@@ -153,17 +157,17 @@ export const Navbar: React.FC<NavbarProps> = ({
           scrolled
             ? dark
               ? 'bg-[#0A0B10]/90 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_50px_-20px_rgba(0,0,0,0.7)]'
-              : 'bg-white/75 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_0_0_1px_rgba(26,26,26,0.07),0_20px_50px_-24px_rgba(26,26,26,0.3)]'
+              : 'bg-white/95 backdrop-blur-2xl backdrop-saturate-150 shadow-[0_0_0_1px_rgba(26,26,26,0.07),0_20px_50px_-24px_rgba(26,26,26,0.3)]'
             : 'bg-transparent shadow-[0_0_0_1px_rgba(255,255,255,0)]'
         }`}
       >
         {/* Brand */}
         <button
           onClick={() => handleTabClick('home')}
-          className="group flex shrink-0 cursor-pointer items-center justify-self-start focus:outline-none"
+          className="group flex shrink-0 cursor-pointer items-center justify-self-start pl-1 focus:outline-none sm:pl-2"
           aria-label="ClassMap Home"
         >
-          <Logo size="md" />
+          <Logo size="header" />
         </button>
 
         {/* Desktop links */}
@@ -174,57 +178,72 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Desktop actions */}
         <div className="hidden shrink-0 items-center gap-2 justify-self-end xl:flex">
-          <div className="relative">
-            <button
-              onClick={() => setLoginMenuOpen(!loginMenuOpen)}
-              onBlur={() => setTimeout(() => setLoginMenuOpen(false), 200)}
-              aria-expanded={loginMenuOpen}
-              className={`${linkBase} flex items-center gap-1.5 ${linkTone}`}
-            >
-              <User className="h-3.5 w-3.5" />
-              <span>Login</span>
-              <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-300 ${loginMenuOpen ? 'rotate-180' : ''}`} />
-            </button>
+          {/* No login on the For Students page: its main button goes straight to the portal. */}
+          {!onStudentsPage && (
+            <div className="relative">
+              <button
+                onClick={() => setLoginMenuOpen(!loginMenuOpen)}
+                onBlur={() => setTimeout(() => setLoginMenuOpen(false), 200)}
+                aria-expanded={loginMenuOpen}
+                className={`${linkBase} flex items-center gap-1.5 ${linkTone}`}
+              >
+                <User className="h-3.5 w-3.5" />
+                <span>Login</span>
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-300 ${loginMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
 
-            <AnimatePresence>
-              {loginMenuOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -6, scale: 0.97 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -6, scale: 0.97 }}
-                  transition={{ duration: 0.18, ease: EASE }}
-                  className="absolute right-0 mt-3 w-56 origin-top-right overflow-hidden rounded-2xl bg-[#0F1117]/95 p-1.5 shadow-[0_0_0_1px_rgba(255,255,255,0.09),0_30px_60px_-20px_rgba(0,0,0,0.8)] backdrop-blur-2xl"
-                >
-                  <div className="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-500">
-                    Select portal
-                  </div>
-                  {PORTALS.map(({ href, label, icon: Icon }) => (
-                    <a
-                      key={href}
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-[13px] font-medium text-stone-200 transition-colors hover:bg-white/[0.07] hover:text-white"
-                    >
-                      <Icon className="h-4 w-4 text-[#FF6321]" />
-                      <span className="flex-1">{label}</span>
-                      <ArrowUpRight className="h-3.5 w-3.5 text-stone-500 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#FF8A4C]" />
-                    </a>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+              <AnimatePresence>
+                {loginMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                    transition={{ duration: 0.18, ease: EASE }}
+                    className="absolute right-0 mt-3 w-56 origin-top-right overflow-hidden rounded-2xl bg-[#0F1117]/95 p-1.5 shadow-[0_0_0_1px_rgba(255,255,255,0.09),0_30px_60px_-20px_rgba(0,0,0,0.8)] backdrop-blur-2xl"
+                  >
+                    <div className="px-3 pb-1.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-500">
+                      Select portal
+                    </div>
+                    {PORTALS.map(({ href, label, icon: Icon }) => (
+                      <a
+                        key={href}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-[13px] font-medium text-stone-200 transition-colors hover:bg-white/[0.07] hover:text-white"
+                      >
+                        <Icon className="h-4 w-4 text-[#FF6321]" />
+                        <span className="flex-1">{label}</span>
+                        <ArrowUpRight className="h-3.5 w-3.5 text-stone-500 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#FF8A4C]" />
+                      </a>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
 
-          <Magnetic strength={0.2}>
-            <motion.button
-              onClick={onOpenAudit}
-              whileTap={{ scale: 0.97 }}
-              className="cursor-pointer rounded-full bg-white px-5 py-2.5 text-[13px] font-semibold tracking-tight text-[#0A0B10] shadow-[0_0_0_1px_rgba(255,255,255,0.4),0_8px_24px_-8px_rgba(255,99,33,0.55)] transition-colors hover:bg-[#FFE9DC]"
-            >
-              Book a Demo
-            </motion.button>
-          </Magnetic>
+          {onStudentsPage ? (
+            <Magnetic strength={0.2}>
+              <motion.a
+                href={STUDENT_ASSESSMENT_URL}
+                whileTap={{ scale: 0.97 }}
+                className="mr-2 inline-block cursor-pointer rounded-full bg-gradient-to-b from-[#FF7A3D] to-[#F0530F] px-5 py-2.5 text-[13px] font-semibold tracking-tight text-white shadow-[0_0_0_1px_rgba(255,255,255,0.18),0_10px_26px_-8px_rgba(255,99,33,0.75)] transition-all hover:brightness-110"
+              >
+                Start assessment
+              </motion.a>
+            </Magnetic>
+          ) : (
+            <Magnetic strength={0.2}>
+              <motion.button
+                onClick={onOpenAudit}
+                whileTap={{ scale: 0.97 }}
+                className="cursor-pointer rounded-full bg-white px-5 py-2.5 text-[13px] font-semibold tracking-tight text-[#0A0B10] shadow-[0_0_0_1px_rgba(255,255,255,0.4),0_8px_24px_-8px_rgba(255,99,33,0.55)] transition-colors hover:bg-[#FFE9DC]"
+              >
+                Book a Demo
+              </motion.button>
+            </Magnetic>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -262,35 +281,47 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <FlagshipCard title="For Schools" line="Routine, teacher dashboards and AI grading" active={currentTab === 'schools'} onClick={() => handleTabClick('schools')} />
                 </div>,
 
-                <div key="login" className="space-y-2">
-                  <div className="px-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-500">
-                    Portal login
+                onStudentsPage ? null : (
+                  <div key="login" className="space-y-2">
+                    <div className="px-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-500">
+                      Portal login
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      {['teachers', 'students', 'admin'].map((p) => (
+                        <a
+                          key={p}
+                          href={`https://classmap.in/${p}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="rounded-xl bg-white/[0.05] py-3 text-center text-[13px] font-medium capitalize text-stone-200 shadow-[0_0_0_1px_rgba(255,255,255,0.07)] transition-colors hover:bg-white/10 hover:text-white"
+                        >
+                          {p}
+                        </a>
+                      ))}
+                    </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    {['teachers', 'students', 'admin'].map((p) => (
-                      <a
-                        key={p}
-                        href={`https://classmap.in/${p}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="rounded-xl bg-white/[0.05] py-3 text-center text-[13px] font-medium capitalize text-stone-200 shadow-[0_0_0_1px_rgba(255,255,255,0.07)] transition-colors hover:bg-white/10 hover:text-white"
-                      >
-                        {p}
-                      </a>
-                    ))}
-                  </div>
-                </div>,
+                ),
 
-                <button
-                  key="demo"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onOpenAudit();
-                  }}
-                  className="w-full rounded-2xl bg-white py-4 text-center text-[15px] font-semibold text-[#0A0B10]"
-                >
-                  Book Free Institutional Demo
-                </button>,
+                onStudentsPage ? (
+                  <a
+                    key="demo"
+                    href={STUDENT_ASSESSMENT_URL}
+                    className="block w-full rounded-2xl bg-gradient-to-b from-[#FF7A3D] to-[#F0530F] py-4 text-center text-[15px] font-semibold text-white shadow-[0_12px_30px_-10px_rgba(255,99,33,0.8)]"
+                  >
+                    Start assessment
+                  </a>
+                ) : (
+                  <button
+                    key="demo"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onOpenAudit();
+                    }}
+                    className="w-full rounded-2xl bg-white py-4 text-center text-[15px] font-semibold text-[#0A0B10]"
+                  >
+                    Book Free Institutional Demo
+                  </button>
+                ),
 
                 <div key="contact" className="flex items-center justify-between border-t border-white/[0.07] px-1 pt-4 text-xs text-stone-400">
                   <a href="tel:+918981716969" className="flex items-center gap-1.5 hover:text-white">
@@ -302,14 +333,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                     info@classmap.in
                   </a>
                 </div>
-              ].map((el) => (
-                <motion.div
-                  key={el.key}
-                  variants={{ hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: EASE } } }}
-                >
-                  {el}
-                </motion.div>
-              ))}
+              ]
+                .filter((el): el is React.ReactElement => el !== null)
+                .map((el) => (
+                  <motion.div
+                    key={el.key}
+                    variants={{ hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: EASE } } }}
+                  >
+                    {el}
+                  </motion.div>
+                ))}
             </motion.div>
           </motion.div>
         )}

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { ImpactStrip } from './components/ImpactStrip';
 import { HowItWorks } from './components/HowItWorks';
 import { RealSheet } from './components/RealSheet';
-import { StudentPage } from './components/student/StudentPage';
+// The For Students page carries its own styles and scripts, so it loads on demand.
+const StudentPage = lazy(() => import('./components/student/StudentPage').then((m) => ({ default: m.StudentPage })));
 import { SchoolPage } from './components/school/SchoolPage';
 import { FinalCTA } from './components/FinalCTA';
 import { CursorGlow, EASE, ScrollProgress } from './components/ui/primitives';
@@ -44,7 +45,9 @@ const pathToTab = (path: string): Tab => {
 };
 
 export default function App() {
-  const [currentTab, setCurrentTab] = useState<Tab>('home');
+  // Start on the page the address names, so a refresh opens straight on it and
+  // does not show the home page for a moment first.
+  const [currentTab, setCurrentTab] = useState<Tab>(() => pathToTab(window.location.pathname.replace(/\/+$/, '').toLowerCase() || '/'));
   const [activePortal, setActivePortal] = useState<'teachers' | 'students' | 'admin' | null>(null);
   /** Slug of the open article, or null for the blog listing. */
   const [blogSlug, setBlogSlug] = useState<string | null>(null);
@@ -52,6 +55,8 @@ export default function App() {
   const [loginRole, setLoginRole] = useState<'teacher' | 'student' | 'admin'>('teacher');
   const [auditModalOpen, setAuditModalOpen] = useState(false);
   const [websiteBillingModalOpen, setWebsiteBillingModalOpen] = useState(false);
+  /** The For Students page loads on demand; the footer waits for it, so a dark footer never shows under the loading screen. */
+  const [studentReady, setStudentReady] = useState(false);
 
   useEffect(() => {
     /**
@@ -79,6 +84,9 @@ export default function App() {
     };
 
     checkPath();
+    // index.html paints the page cream on /for-students until the app has taken
+    // over; from here the app's own background does the job.
+    document.documentElement.style.backgroundColor = '';
     window.addEventListener('popstate', checkPath);
     return () => window.removeEventListener('popstate', checkPath);
   }, []);
@@ -135,7 +143,13 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#07080C] text-[#12151C] font-sans antialiased selection:bg-[#FF6321]/25 selection:text-inherit">
+    <div
+      className={`min-h-screen font-sans antialiased text-[#12151C] selection:bg-[#FF6321]/25 selection:text-inherit ${
+        // The For Students page is light; every other page is dark. The base colour
+        // follows, so a hard refresh never opens on a black screen.
+        currentTab === 'students' ? 'bg-[#FFFAF6]' : 'bg-[#07080C]'
+      }`}
+    >
       <ScrollProgress />
       <CursorGlow />
 
@@ -146,6 +160,7 @@ export default function App() {
         onScrollToSection={handleScrollToSection}
         currentTab={currentTab}
         onSelectTab={navigateToTab}
+        lightHero={currentTab === 'students'}
       />
 
       {/* Main Page Content */}
@@ -172,7 +187,9 @@ export default function App() {
             onOpenAudit={() => setAuditModalOpen(true)}
           />
         ) : currentTab === 'students' ? (
-          <StudentPage />
+          <Suspense fallback={<div className="min-h-screen bg-[#FFFAF6]" />}>
+            <StudentPage onReady={setStudentReady} />
+          </Suspense>
         ) : currentTab === 'schools' ? (
           <SchoolPage onOpenAudit={() => setAuditModalOpen(true)} />
         ) : (
@@ -202,15 +219,17 @@ export default function App() {
       </motion.main>
 
       {/* Footer */}
-      <Footer
-        onOpenLogin={handleOpenLogin}
-        onOpenAudit={() => setAuditModalOpen(true)}
-        onOpenPrivacy={() => navigateToTab('privacy')}
-        onOpenBlog={() => navigateToTab('blog')}
-        onOpenStudents={() => navigateToTab('students')}
-        onOpenSchools={() => navigateToTab('schools')}
-        onScrollToSection={handleScrollToSection}
-      />
+      {(currentTab !== 'students' || studentReady) && (
+        <Footer
+          onOpenLogin={handleOpenLogin}
+          onOpenAudit={() => setAuditModalOpen(true)}
+          onOpenPrivacy={() => navigateToTab('privacy')}
+          onOpenBlog={() => navigateToTab('blog')}
+          onOpenStudents={() => navigateToTab('students')}
+          onOpenSchools={() => navigateToTab('schools')}
+          onScrollToSection={handleScrollToSection}
+        />
+      )}
 
       {/* Portal Login Modal */}
       <LoginModal

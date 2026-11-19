@@ -1,0 +1,12 @@
+@property --n   { syntax: '<integer>'; initial-value: 0; inherits: false; }
+@property --beam{ syntax: '<angle>';   initial-value: 0deg; inherits: false; }
+@property --t{ syntax:'<integer>'; initial-value:10; inherits:false; }
+@property --sec{ syntax:'<number>'; inherits:true; initial-value:0; }
+@property --bt{ syntax:'<integer>'; initial-value:0; inherits:false; }
+@property --z{ syntax:'<number>'; inherits:true; initial-value:1; }
+@property --tx{ syntax:'<length>'; inherits:true; initial-value:0px; }
+@property --ty{ syntax:'<length>'; inherits:true; initial-value:0px; }
+@property --pv{ syntax:'<integer>'; initial-value:0; inherits:false; }
+@property --pv{ syntax:'<integer>'; initial-value:0; inherits:true; }
+@property --pp{ syntax:'<integer>'; initial-value:0; inherits:true; }
+@property --sv{ syntax:'<integer>'; initial-value:520; inherits:true; }

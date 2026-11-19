@@ -10,7 +10,7 @@ import defaultLogoImg from '../assets/images/logo-mark-new.png';
 
 interface LogoProps {
   className?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'header' | 'lg' | 'xl';
   imageUrl?: string;
   /** Hide the name, e.g. where a custom full lockup has been uploaded. */
   showWordmark?: boolean;
@@ -25,6 +25,9 @@ const SIZES = {
   // The header sets the name larger and at 800. Against this mark it read
   // undersized and light at 700; the footer, which is already larger, keeps 700.
   md: { mark: 'h-8 sm:h-9', text: 'text-2xl sm:text-[28px]', weight: 'font-extrabold' },
+  // The site header: a larger mark, a wider gap and one weight lighter than md, so
+  // the name no longer crowds the mark.
+  header: { mark: 'h-9 sm:h-[41px]', text: 'text-2xl sm:text-[28px]', weight: 'font-bold', gap: 'gap-2.5 sm:gap-3.5' },
   lg: { mark: 'h-9 sm:h-10 md:h-11', text: 'text-xl sm:text-2xl', weight: 'font-bold' },
   xl: { mark: 'h-9 sm:h-10 md:h-11 lg:h-12', text: 'text-xl sm:text-2xl md:text-[26px]', weight: 'font-bold' },
 };
@@ -77,7 +80,7 @@ export const Logo: React.FC<LogoProps> = ({
   const s = SIZES[size];
 
   return (
-    <div className={`inline-flex items-center gap-2 sm:gap-2.5 shrink-0 select-none ${className}`}>
+    <div className={`inline-flex items-center shrink-0 select-none ${'gap' in s ? s.gap : 'gap-2 sm:gap-2.5'} ${className}`}>
       {/* Decorative: the name sits in the text beside it, so announcing the
           image too would read the brand out twice. */}
       <img

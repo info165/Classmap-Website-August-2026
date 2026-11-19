@@ -18,6 +18,12 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3" />
     <link rel="manifest" href="/site.webmanifest?v=3" />
     <meta name="theme-color" content="#07080C" />
+    <!-- The For Students page is light. Paint the page cream from the very first
+         frame, so a hard refresh never opens on the dark base colour. The app clears
+         this once it has taken over. -->
+    <script>
+      if (location.pathname.indexOf('/for-students') === 0) document.documentElement.style.backgroundColor = '#FFFAF6';
+    </script>
 
     <!-- Core SEO Meta Tags -->
     <meta name="description" content="Classmap goes beyond report cards to reveal WHY students struggle through handwritten assessment evaluation, concept-level gap analysis, and learning graph intelligence." />

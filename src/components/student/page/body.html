@@ -1,0 +1,590 @@
+<!-- shared SVG gradients -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gradO" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFB27A"/><stop offset="1" stop-color="#FF5A16"/></linearGradient>
+    <linearGradient id="gradO2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFB27A"/><stop offset="1" stop-color="#F0530F"/></linearGradient>
+    <linearGradient id="gradArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF6321" stop-opacity=".28"/><stop offset="1" stop-color="#FF6321" stop-opacity="0"/></linearGradient>
+    <linearGradient id="gradArea2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF6321" stop-opacity=".22"/><stop offset="1" stop-color="#FF6321" stop-opacity="0"/></linearGradient>
+  </defs>
+</svg>
+
+<div class="progress" id="progress"></div>
+<div class="glow" id="glow"></div>
+<div class="tip" id="tip"></div>
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="ClassMap home"><img src="/student-page/assets/logo-mark.png" alt=""><span>ClassMap</span></a>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="#story" data-go="1">Diagnostic engine</a>
+    <a href="#fix">Fix weak spots</a>
+    <a href="#grading">AI grading</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+  <div class="nav-cta">
+    <a class="btn btn-primary btn-sm magnet" href="https://student.classmap.in/">Start assessment
+      <span class="arr"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><i></i></button>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <a class="dl" href="#story" data-go="1">Diagnostic <em>engine</em></a>
+  <a class="dl" href="#fix">Fix weak spots</a>
+  <a class="dl" href="#grading">AI grading</a>
+  <a class="dl" href="#pricing">Pricing</a>
+  <a class="dl" href="#faq">FAQ</a>
+  <a class="btn btn-primary" href="https://student.classmap.in/">Start assessment
+    <span class="arr"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+</div>
+
+<main id="top">
+
+<!-- ============ MOBILE HERO (filled by JS from the first beat; shown on small screens only) ============ -->
+<section class="hero-m" id="heroM" aria-hidden="false"><div class="wrap"></div></section>
+
+<!-- ============ STORY: hero + 6 steps, one pinned phone ============ -->
+<section class="story" id="story">
+  <div class="story-pin">
+    <canvas id="contours" aria-hidden="true"></canvas>
+    <div class="aurora a1"></div><div class="aurora a2"></div>
+
+    <div class="story-grid">
+      <div class="story-text" id="beats">
+
+        <!-- 0 · HERO -->
+        <article class="beat b0" data-i="0">
+          <div class="hero-full">
+            <div class="pill"><b>Class 10</b> CBSE Board Exams · 2027</div>
+            <h1 class="split" id="h1"><span class="br">See how prepared</span><span class="br">you are for <em class="ac">Boards.</em></span></h1>
+            <p class="lead">ClassMap’s personal diagnostic engine tests every concept, finds your weak topics, and builds your next test around you.</p>
+            <div class="hero-cta">
+              <a class="btn btn-primary magnet" href="https://student.classmap.in/">Start assessment
+                <span class="arr"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+            </div>
+            <div class="proof">
+              <span><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" fill="currentColor" opacity=".15"/><path d="M5.5 10.3l3 3 6-6.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>AI Analysis – Handwritten Answers</span>
+              <span><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" fill="currentColor" opacity=".15"/><path d="M5.5 10.3l3 3 6-6.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Objective + subjective</span>
+              <span><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" fill="currentColor" opacity=".15"/><path d="M5.5 10.3l3 3 6-6.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Previous-year CBSE papers</span>
+            </div>
+            <div class="cd2" id="count" data-exam="2027-02-16T10:30:00+05:30">
+              <div class="cd2-top"><span class="cd2-live"><i></i>Boards 2027 countdown</span><span class="cd2-sub">Every day counts</span></div>
+              <div class="cd2-grid"><div class="cd2-u "><div class="cd2-v"><b class="roll" data-u="d">00</b></div><span>Days</span></div><div class="cd2-u "><div class="cd2-v"><b class="roll" data-u="h">00</b></div><span>Hours</span></div><div class="cd2-u "><div class="cd2-v"><b class="roll" data-u="m">00</b></div><span>Minutes</span></div><div class="cd2-u s"><div class="cd2-v"><b class="roll" data-u="s">00</b></div><span>Seconds</span></div></div>
+            </div>
+          </div>
+          <div class="hero-hint">
+            <div class="idx"><b>▼</b><i></i>Scroll</div>
+            <div class="bt">Scroll to play one round.</div>
+          </div>
+        </article>
+
+        <!-- 1 -->
+        <article class="beat" data-i="1">
+          <div class="idx"><b>01</b><i></i>Topic</div>
+          <h2 class="bt">Pick a topic.</h2>
+          <p class="bp">Choose a subject and the topic you are studying. Your diagnostic adaptive engine starts learning about you from the very first test.</p>
+          <span class="tg">Example: Science · Carbon and its Compounds</span>
+        </article>
+        <!-- 2 -->
+        <article class="beat" data-i="2">
+          <div class="idx"><b>02</b><i></i>Base test</div>
+          <h2 class="bt">Choose a category.<br>Take the Base Test.</h2>
+          <p class="bp">Pick a category and take the base test. It is the engine’s first honest read of where you really stand on every concept in the topic.</p>
+          <span class="tg">Concept by concept</span>
+        </article>
+        <!-- 3 -->
+        <article class="beat" data-i="3">
+          <div class="idx"><b>03</b><i></i>Weak topics</div>
+          <h2 class="bt">See your<br>weak topics.</h2>
+          <p class="bp">The engine highlights every topic in green, yellow or red, so you know exactly what needs work and what is already strong.</p>
+          <div class="tgs"><span class="tg"><i style="background:var(--r)"></i>Red</span><span class="tg"><i style="background:var(--y)"></i>Yellow</span><span class="tg"><i style="background:var(--g)"></i>Green</span></div>
+        </article>
+        <!-- 4 -->
+        <article class="beat" data-i="4">
+          <div class="idx"><b>04</b><i></i>Mock papers</div>
+          <h2 class="bt">Attempt CBSE<br>mock papers.</h2>
+          <p class="bp">Practice CBSE Mock Test papers and Previous Year Questions from the ClassMap Student Portal, with both objective and subjective questions in one place.</p>
+          <span class="tg">PYQ 2025 - 2026</span>
+        </article>
+        <!-- 5 -->
+        <article class="beat" data-i="5">
+          <div class="idx"><b>05</b><i></i>PAL</div>
+          <h2 class="bt">Take your<br>adaptive test, <em class="ac">PAL.</em></h2>
+          <p class="bp">Personal Adaptive Learning (PAL) builds a test around your weak spots and keeps adjusting to you, so every minute goes where it counts.</p>
+          <span class="tg">Personal Adaptive Learning</span>
+        </article>
+        <!-- 6 -->
+        <article class="beat" data-i="6">
+          <div class="idx"><b>06</b><i></i>Report</div>
+          <h2 class="bt">Get your<br>analysis report.</h2>
+          <p class="bp">See what improved, what is still weak, and what to study next. Then the loop begins again, sharper every round.</p>
+          <span class="tg">Move to next topic</span>
+        </article>
+      </div>
+
+      <div class="story-dev" id="dev">
+        <div class="dev-stage">
+          <div class="halo"></div><div class="orbit"></div><div class="orbit o2"></div>
+          <div id="devPhone"></div>
+          <div class="floats" id="floats"></div>
+        </div>
+        <div class="dev-pill"><b id="devNum">▶</b><span id="devTitle">ClassMap Student Portal</span></div>
+        <div class="dev-dots" id="devDots" role="tablist" aria-label="Steps"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FIX (heatmap) ============ -->
+<section class="fix" id="fix">
+  <i class="fix-orb o1"></i><i class="fix-orb o2"></i>
+  <div class="wrap fix-grid">
+    <div class="fix-copy">
+      <span class="eyebrow rv">The result</span>
+      <h2 class="big split" data-split>Know exactly <em class="ac">what to fix.</em></h2>
+      <p class="lead rv" style="--d:.15">Identify and fix your remaining academic weaknesses before your board exams. Run it round after round and watch the red turn green.</p>
+      <div class="legend-lg rv" style="--d:.25" id="hmLegend">
+        <button class="lg g" data-f="g"><i></i><span><b>Green</b> — you’ve got this. Keep it warm.</span></button>
+        <button class="lg y" data-f="y"><i></i><span><b>Yellow</b> — nearly there. Quick revision.</span></button>
+        <button class="lg r" data-f="r"><i></i><span><b>Red</b> — fix first. This is where marks hide.</span></button>
+      </div>
+      <a class="btn btn-primary magnet rv" style="--d:.35" href="https://student.classmap.in/">Start assessment
+        <span class="arr"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+    </div>
+
+    <div class="hm-wrap rv" style="--d:.15">
+      <div class="hm" id="hm">
+        <div class="hm-top">
+          <div class="tabs" role="tablist" aria-label="Subject" id="hmTabs"></div>
+          <div class="rounds">
+            <div class="seg2" id="hmRounds"></div>
+            <button class="play" id="hmPlay" aria-label="Play or pause the loop"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9-5.5z"/></svg></button>
+          </div>
+        </div>
+        <div class="hm-hero">
+          <div class="hm-ring" id="hmRing"><svg viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="15.200"/><circle class="fg" cx="18" cy="18" r="15.200"/></svg><div><b id="stP">0%</b><small>READINESS</small></div></div>
+          <div class="hm-stats">
+            <div class="r"><span><i></i>Fix first</span><b id="stR">0</b><u></u></div>
+            <div class="y"><span><i></i>Revise</span><b id="stY">0</b><u></u></div>
+            <div class="g"><span><i></i>Strong</span><b id="stG">0</b><u></u></div>
+          </div>
+        </div>
+        <div class="hm-body" id="hmBody"></div>
+        <div class="hm-ins" id="hmIns">
+          <span class="hi-ic"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.5l2 5.5 5.500 2-5.500 2-2 5.500-2-5.500L2.500 9 8 7z"/></svg></span>
+          <div class="hi-tx"><small id="hiK">FIX FIRST</small><b id="hiT">—</b><span id="hiS"></span></div>
+          <em id="hiD">Starting point</em>
+        </div>
+        <div class="hm-note"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.500"/><path d="M8 7v4M8 5v.01" stroke-linecap="round"/></svg>Interactive preview with sample data. Hover any cell or colour, switch rounds, or press play.</div>
+      </div></div>
+  </div>
+</section>
+
+<!-- ============ APP SHOWCASE ============ -->
+<section class="showcase" id="app">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow rv">Inside the ClassMap Student Portal</span>
+      <h2 class="split" data-split>Everything you need, <em class="ac">on any screen.</em></h2>
+      <p class="lead rv" style="--d:.15">Take the tests, read your concept map and review every report wherever you study.</p>
+    </div>
+    <!-- To use real screenshots: save PNGs as /student-page/assets/shots/app-1.png, app-2.png, app-3.png (portrait, ~9:19). They automatically replace the sample screens below. -->
+    <!-- To use real screenshots instead of the live screens: save PNGs as /student-page/assets/shots/app-1.png, app-2.png, app-3.png -->
+    <div class="lap" id="lap">
+      <div class="lap-stage">
+        <div class="lap-aura"></div>
+        <div class="lap-3d" id="lap3d">
+          <div class="lap-lid">
+            <div class="lap-front">
+              <div class="lap-bezel">
+                <i class="lap-cam"></i>
+                <div class="lap-scr" id="lapScr">
+                  <div class="boot"><div class="boot-logo"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46"/></svg><img src="/student-page/assets/logo-mark.png" alt=""></div></div>
+                  <div class="la">
+                    <div class="la-bar">
+                      <i class="tl r"></i><i class="tl y"></i><i class="tl g"></i>
+                      <span class="la-tab"><img src="/student-page/assets/logo-mark.png" alt="">ClassMap Student</span>
+                      <span class="la-url"><svg viewBox="0 0 12 14" fill="currentColor"><path d="M3 5V3.800a3 3 0 0 1 6 0V5h.5A1.500 1.500 0 0 1 11 6.500v5A1.500 1.500 0 0 1 9.500 13h-7A1.500 1.500 0 0 1 1 11.500v-5A1.500 1.500 0 0 1 2.500 5zM4.500 5h3V3.800a1.500 1.500 0 0 0-3 0z"/></svg>student.classmap.in</span>
+                    </div>
+                    <div class="la-view" id="lapView">
+                      <div class="la-world" id="lapWorld">
+                        <div class="pg" data-p="0"><img src="/student-page/assets/lap-1.webp" alt="ClassMap student dashboard showing every chapter" width="1807" height="842"></div>
+                        <div class="pg" data-p="1"><img src="/student-page/assets/lap-2.webp" alt="Smart Test builder for the Our Environment chapter" width="1827" height="837"></div>
+                        <div class="pg pq" data-p="2">
+                          <div class="pq-top"><i class="pq-x"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round"><path d="M3.500 3.500l9 9M12.500 3.500l-9 9"/></svg></i><div class="pq-pg"><small>SMART TEST · 5 TOPICS</small><div class="pq-bar"><i></i></div></div><span class="pq-clk"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.600" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M8 4.500V8l2.300 1.400"/></svg><b>29:38</b></span><span class="pq-cnt">2/5</span></div>
+                          <div class="pq-body">
+                            <div class="pq-chips"><span class="pq-q2">Q2</span><span class="pq-sec">SECTION A · OBJECTIVE</span><span class="pq-tm"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.600" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M8 4.500V8l2.300 1.400"/></svg><b>0:05</b> / 1:10</span><span class="pq-rw"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.500" stroke-linecap="round" stroke-linejoin="round"><path d="M10.500 2.500l3 3L5.500 13.500 2 14l.5-3.500z"/></svg>Rough work</span></div>
+                            <h5 class="pq-q">Which group of chemical compounds has been identified as a major cause of ozone layer depletion?</h5>
+                            <div class="pq-opts">
+                              <div class="pq-opt a" style="--k:0"><b>A</b><span>Water vapour released from oceans</span><i class="pq-ck"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round"><path d="M3.500 8.300l3 3 6-6.500"/></svg></i></div>
+                              <div class="pq-opt b" style="--k:1"><b>B</b><span>Naturally occurring nitrogen gas in the atmosphere</span><i class="pq-ck"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round"><path d="M3.500 8.300l3 3 6-6.500"/></svg></i></div>
+                              <div class="pq-opt c" style="--k:2"><b>C</b><span>Chlorofluorocarbons (CFCs)</span><i class="pq-ck"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round"><path d="M3.500 8.300l3 3 6-6.500"/></svg></i></div>
+                              <div class="pq-opt d" style="--k:3"><b>D</b><span>Carbohydrates found in food</span><i class="pq-ck"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round"><path d="M3.500 8.300l3 3 6-6.500"/></svg></i></div>
+                            </div>
+                            <span class="pq-hint"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.500" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12.500h4M6.500 14h3M8 2a4 4 0 0 0-2.200 7.300c.4.300.7.800.7 1.300V11h3v-.4c0-.5.300-1 .7-1.300A4 4 0 0 0 8 2z"/></svg>Need a hint?</span>
+                          </div>
+                          <div class="pq-foot">
+                            <div class="pq-leg"><span><i class="m"></i>Multiple choice</span><span><i class="v"></i>Assertion &amp; reason</span></div>
+                            <div class="pq-row"><span class="pq-bk">Back</span><div class="pq-nums"><span>1</span><span class="now">2</span><span>3</span><span class="v">4</span><span class="v">5</span></div><span class="pq-nx">Next</span></div>
+                            <div class="pq-ans"><span class="n0">0/5 answered</span><span class="n1">1/5 answered</span></div>
+                          </div>
+                        </div>
+                        <div class="pg rs" data-p="3">
+                          <div class="rs-col">
+                            <div class="rs-back"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"><path d="M13 8H3M7 4L3 8l4 4"/></svg>Back to Science</div>
+                            <div class="rs-hero">
+                              <div class="rs-lab">SCIENCE · SMART TEST RESULT</div>
+                              <div class="rs-row1">
+                                <span class="rs-ring"><svg viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="15.200"/><circle class="fg" cx="18" cy="18" r="15.200"/></svg><b class="rs-pct" style="--to:60"></b></span>
+                                <div class="rs-txt"><h5>Good, a few gaps to close</h5><p>You know most of it. The gaps below are where the next marks are.</p>
+                                  <div class="rs-tiles"><div><b class="rs-m" style="--to:3"></b><span>MARKS</span></div><div><b>11/30 min</b><span>TIME USED</span></div></div></div>
+                              </div>
+                            </div>
+                            <div class="rs-card">
+                              <div class="rs-ch">Topic by topic</div><div class="rs-cs">Weakest first. This is what your next Smart Test will work on.</div>
+                              <div class="rs-list">
+                              <div class="rs-row r" style="--k:0;--to:0"><div class="rs-r1"><span>Food Chains, Food Webs and Trophic Levels</span><b class="rs-p"></b></div><div class="rs-bar"><i style="--w:6%"></i></div></div>
+                              <div class="rs-row r" style="--k:1;--to:0"><div class="rs-r1"><span>Managing the Garbage We Produce</span><b class="rs-p"></b></div><div class="rs-bar"><i style="--w:6%"></i></div></div>
+                              <div class="rs-row g" style="--k:2;--to:100"><div class="rs-r1"><span>Ecosystem and its Components</span><b class="rs-p"></b></div><div class="rs-bar"><i style="--w:100%"></i></div></div>
+                              <div class="rs-row g" style="--k:3;--to:100"><div class="rs-r1"><span>Flow of Energy and Biological Magnification</span><b class="rs-p"></b></div><div class="rs-bar"><i style="--w:100%"></i></div></div>
+                              <div class="rs-row g" style="--k:4;--to:100"><div class="rs-r1"><span>The Ozone Layer and its Depletion</span><b class="rs-p"></b></div><div class="rs-bar"><i style="--w:100%"></i></div></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="pg lmk" data-p="4">
+                          <div class="lmk-col">
+                            <div class="lmk-back"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"><path d="M13 8H3M7 4L3 8l4 4"/></svg>Back to chapters</div>
+                            <div class="lmk-hero">
+                              <i class="lmk-orb"></i>
+                              <div class="lmk-lab"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.500" stroke-linecap="round" stroke-linejoin="round"><path d="M4 1.800h5.500L12.500 5v9.200H4z"/><path d="M6.200 8.500h4M6.200 11h4"/></svg>CBSE MOCK TESTS</div>
+                              <h5>Practise on the real paper</h5>
+                              <p>The official CBSE sample papers, in the board pattern and in 3 hours. Every answer is marked step by step against the CBSE marking scheme.</p>
+                            </div>
+                            <div class="lmk-chips"><span class="lmk-chip" style="--ci:0"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.900" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.500"/><path d="M8.500 7.500h7M8.500 12h.01M12 12h.01M15.500 12h.01M8.500 16h.01M12 16h.01M15.500 16h.01"/></svg></i>Mathematics</span><span class="lmk-chip lmk-sci on" style="--ci:1"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.900" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L5 19a1.600 1.600 0 0 0 1.400 2.200h11.200A1.600 1.600 0 0 0 19 19l-5-10V3"/><path d="M7.600 15h8.800"/></svg></i>Science</span><span class="lmk-chip" style="--ci:2"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.900" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.500A1.500 1.500 0 0 1 6.500 3H19v15H6.500A1.500 1.500 0 0 0 5 19.500z"/><path d="M5 19.500A1.500 1.500 0 0 0 6.500 21H19M9 8h6M9 12h4"/></svg></i>English</span><span class="lmk-chip" style="--ci:3"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.900" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3.500 9h17M3.500 15h17M12 3c-3 3-3 15 0 18"/></svg></i>Social Science</span></div>
+                            <div class="lmk-card">
+                              <div class="lmk-row">
+                                <span class="lmk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3l1.800 4.700L17.500 9.500l-4.700 1.800L11 16l-1.800-4.700L4.500 9.500l4.700-1.800z"/><path d="M18.500 14l.8 2.200 2.200.8-2.200.8-.8 2.200-.8-2.200-2.200-.8 2.200-.8z"/></svg></span>
+                                <div class="lmk-meta"><small>CBSE SAMPLE PAPER 2025-26</small><b>Science</b><span><u>80 marks</u><u><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.500" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M8 4.500V8l2.300 1.400"/></svg>3 hours</u><u>39 questions</u></span></div>
+                              </div>
+                              <div class="lmk-tags"><span><i style="background:#0EA5E9"></i>A · Biology</span><span><i style="background:#10B981"></i>B · Chemistry</span><span><i style="background:#F5B72C"></i>C · Physics</span></div>
+                              <div class="lmk-start"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.500" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6.500"/><path d="M6.700 5.600L10.600 8l-3.900 2.400z" fill="currentColor"/></svg>Start this mock test</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="pg mp" data-p="5">
+                          <div class="mp-col">
+                            <div class="mp-cancel"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round"><path d="M3.500 3.500l9 9M12.500 3.500l-9 9"/></svg>Cancel</div>
+                            <div class="mp-hero">
+                              <i class="lmk-orb"></i>
+                              <div class="mp-lab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3l1.800 4.700L17.500 9.500l-4.700 1.800L11 16l-1.800-4.700L4.500 9.500l4.700-1.800z"/><path d="M18.500 14l.8 2.200 2.200.8-2.200.8-.8 2.200-.8-2.200-2.200-.8 2.200-.8z"/></svg>CBSE MOCK TEST · 2025-26</div>
+                              <h5>CBSE Class 10 Science · Sample Paper 2025-26</h5>
+                              <p>Objective + written · 3 hours</p>
+                              <div class="mp-stats"><div class="mp-s" style="--si:0"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.600" stroke-linecap="round" stroke-linejoin="round"><path d="M2.500 5l1.500 1.500L6.500 4M2.500 11l1.500 1.500L6.500 10M9.500 5.500h8M9.500 11.500h8M2.500 17h15"/></svg><b class=mp-n style=--to:39></b><span>QUESTIONS</span></div><div class="mp-s" style="--si:1"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.600"><circle cx="10" cy="10" r="7.500"/><circle cx="10" cy="10" r="4"/><circle cx="10" cy="10" r="1" fill="currentColor"/></svg><b class=mp-n style=--to:80></b><span>MARKS</span></div><div class="mp-s" style="--si:2"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.600" stroke-linecap="round"><circle cx="10" cy="10" r="7.500"/><path d="M10 5.500V10l3 2"/></svg><b class=mp-n style=--to:180></b><span>MINUTES</span></div><div class="mp-s" style="--si:3"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.600" stroke-linecap="round" stroke-linejoin="round"><path d="M5.500 2.500h9M5.500 17.500h9M6.500 2.500c0 4 3.500 5 3.500 7.500s-3.500 3.500-3.500 7.500M13.500 2.500c0 4-3.500 5-3.500 7.500s3.500 3.500 3.500 7.500"/></svg><b>4:37</b><span>PER QUESTION</span></div></div>
+                              <div class="mp-note">The 4 case studies have 14 parts in all, shown one part at a time.</div>
+                            </div>
+                            <div class="mp-card">
+                              <div class="mp-ch">Where the marks are (CBSE pattern)</div>
+                              <div class="mp-split"><i style="flex:30"></i><i style="flex:25"></i><i style="flex:25"></i></div>
+                              <div class="mp-secs">
+                                <div><b>A</b><span><strong>Biology</strong><small>16 questions · 30 marks</small></span></div>
+                                <div><b>B</b><span><strong>Chemistry</strong><small>13 questions · 25 marks</small></span></div>
+                                <div><b>C</b><span><strong>Physics</strong><small>10 questions · 25 marks</small></span></div>
+                              </div>
+                            </div>
+                            <div class="mp-about"><div class="mp-ah"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.500c2.500-1 5-.800 7 .800 2-1.600 4.500-1.800 7-.800v10.500c-2.500-1-5-.800-7 .800-2-1.600-4.500-1.800-7-.800zM10 5.300v10.500"/></svg>About this paper</div><p>This is the official CBSE sample paper, in its own order, as set for the board pattern. It is not personalised. After you submit, each answer is marked step by step against the CBSE marking scheme.</p></div>
+                          </div>
+                        </div>
+                        <div class="pg ph" data-p="6">
+                          <div class="ph-col">
+                            <div class="ph-back"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"><path d="M13 8H3M7 4L3 8l4 4"/></svg>Back to chapters</div>
+                            <h4 class="ph-h">My past tests</h4>
+                            <p class="ph-s">Open any test to see how you did, question by question.</p>
+                            <div class="ph-chips"><span class="ph-chip">All subjects</span><span class="ph-chip">Mathematics</span><span class="ph-chip on">Science</span><span class="ph-chip">English</span><span class="ph-chip">Social Science</span></div>
+                            <div class="ph-list">
+            <div class="ph-row g" style="--k:0;--to:100;--v:100"><span class="ph-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3l1.800 4.700L17.500 9.500l-4.700 1.800L11 16l-1.800-4.700L4.500 9.500l4.700-1.800z"/><path d="M18.500 14l.8 2.200 2.200.8-2.200.8-.8 2.200-.8-2.200-2.200-.8 2.200-.8z"/></svg></span><div class="ph-t"><b>Chemical Equations: Word Equations and Balancing and 4 more topics</b><small>Science · 30 min test · 17 Nov 2026</small></div><span class="ph-ring"></span><span class="ph-pct"></span><i class="ph-ch"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.500L10.500 8 6 12.500"/></svg></i></div>
+            <div class="ph-row a" style="--k:1;--to:80;--v:80"><span class="ph-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3l1.800 4.700L17.500 9.500l-4.700 1.800L11 16l-1.800-4.700L4.500 9.500l4.700-1.800z"/><path d="M18.500 14l.8 2.200 2.200.8-2.200.8-.8 2.200-.8-2.200-2.200-.8 2.200-.8z"/></svg></span><div class="ph-t"><b>Chemical Properties of Acids and Bases and 4 more topics</b><small>Science · 30 min test · 17 Nov 2026</small></div><span class="ph-ring"></span><span class="ph-pct"></span><i class="ph-ch"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.500L10.500 8 6 12.500"/></svg></i></div>
+            <div class="ph-row a" style="--k:2;--to:75;--v:75"><span class="ph-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3l1.800 4.700L17.500 9.500l-4.700 1.800L11 16l-1.800-4.700L4.500 9.500l4.700-1.800z"/><path d="M18.500 14l.8 2.200 2.200.8-2.200.8-.8 2.200-.8-2.200-2.200-.8 2.200-.8z"/></svg></span><div class="ph-t"><b>Electric Current, Charge and Potential Difference and 4 more topics</b><small>Science · 60 min test · 16 Nov 2026</small></div><span class="ph-ring"></span><span class="ph-pct"></span><i class="ph-ch"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.500L10.500 8 6 12.500"/></svg></i></div>
+            <div class="ph-row a" style="--k:3;--to:77;--v:77"><span class="ph-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3l1.800 4.700L17.500 9.500l-4.700 1.800L11 16l-1.800-4.700L4.500 9.500l4.700-1.800z"/><path d="M18.500 14l.8 2.200 2.200.8-2.200.8-.8 2.200-.8-2.200-2.200-.8 2.200-.8z"/></svg></span><div class="ph-t"><b>Chemical Equations: Word Equations and Balancing and 4 more topics</b><small>Science · 30 min test · 16 Nov 2026</small></div><span class="ph-ring"></span><span class="ph-pct"></span><i class="ph-ch"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.500L10.500 8 6 12.500"/></svg></i></div>
+            <div class="ph-row a" style="--k:4;--to:57;--v:57"><span class="ph-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3l1.800 4.700L17.500 9.500l-4.700 1.800L11 16l-1.800-4.700L4.500 9.500l4.700-1.800z"/><path d="M18.500 14l.8 2.200 2.200.8-2.200.8-.8 2.200-.8-2.200-2.200-.8 2.200-.8z"/></svg></span><div class="ph-t"><b>Electric Current, Charge and Potential Difference and 4 more topics</b><small>Science · 30 min test · 15 Nov 2026</small></div><span class="ph-ring"></span><span class="ph-pct"></span><i class="ph-ch"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.500L10.500 8 6 12.500"/></svg></i></div>
+            <div class="ph-row a" style="--k:5;--to:72;--v:72"><span class="ph-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3l1.800 4.700L17.500 9.500l-4.700 1.800L11 16l-1.800-4.700L4.500 9.500l4.700-1.800z"/><path d="M18.500 14l.8 2.200 2.200.8-2.200.8-.8 2.200-.8-2.200-2.200-.8 2.200-.8z"/></svg></span><div class="ph-t"><b>Metals and Non-metals and 4 more topics</b><small>Science · 30 min test · 14 Nov 2026</small></div><span class="ph-ring"></span><span class="ph-pct"></span><i class="ph-ch"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.800" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.500L10.500 8 6 12.500"/></svg></i></div>
+                            </div>
+                          </div>
+                        </div>
+                        <i class="la-hl" id="lapHl"></i>
+                        <div class="la-tag" id="lapTag"><i class="tg-dot"></i><div class="tg-box"><b></b></div></div>
+                        <i class="la-rip" id="lapRip"></i>
+                        <i class="lcur" id="lapCur"><svg viewBox="0 0 24 28"><path d="M3 2l17 10.500-7.500 1.800 4.200 8.200-3.400 1.700-4.200-8.200L3 20z" fill="#111" stroke="#fff" stroke-width="1.700" stroke-linejoin="round"/></svg></i>
+                      </div>
+                    </div>
+                  </div>
+                  <i class="lap-glare"></i>
+                </div>
+              </div>
+            </div>
+            <div class="lap-back"><img src="/student-page/assets/logo-mark.png" alt=""></div>
+          </div>
+          <div class="lap-hinge"></div>
+          <div class="lap-base"><i class="lap-notch"></i></div>
+        </div>
+        <i class="lap-shadow"></i>
+        <div class="lap-chip a"><span class="ic"><svg viewBox="0 0 20 20" fill="currentColor"><rect x="2.500" y="2.500" width="6" height="6" rx="1.600"/><rect x="11.500" y="2.500" width="6" height="6" rx="1.600" opacity=".6"/><rect x="2.500" y="11.500" width="6" height="6" rx="1.600" opacity=".6"/><rect x="11.500" y="11.500" width="6" height="6" rx="1.600"/></svg></span><div><b></b><span></span></div></div>
+        <div class="lap-chip b"><span class="ic g"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="7"/><path d="M10 6v4.200l2.800 1.800"/></svg></span><div><b></b><span></span></div></div>
+      </div>
+      <div class="lap-cap" id="lapCap"><span class="lc-n">01</span><span class="lc-t"><b></b><small></small></span><span class="lc-d"><button aria-label="Chapters"><i></i></button><button aria-label="Smart Test"><i></i></button><button aria-label="Question"><i></i></button><button aria-label="Result"><i></i></button><button aria-label="Mock papers"><i></i></button><button aria-label="Mock paper"><i></i></button><button aria-label="Past tests"><i></i></button></span></div>
+    </div>
+    <div class="fan" id="fan">
+      <div class="fan-bg"></div>
+      <div class="fan-orbit"></div><div class="fan-orbit o2"></div>
+      <div class="fchip c1" style="--k:150px;--dl:1.1s"><div class="fci"><span class="ic g"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg></span><div><b>5/5 marks</b><span>Smart Test result</span></div></div></div>
+      <div class="fchip c2" style="--k:-120px;--dl:1.3s"><div class="fci"><span class="ic"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14l5-5 3 3 6-7M12 5h5v5"/></svg></span><div><b>+18 points</b><span>Round 1 → Round 2</span></div></div></div>
+      <div class="fchip c3" style="--k:90px;--dl:1.5s"><div class="fci"><span class="ic"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.5l2 5.5 5.5 2-5.5 2-2 5.5-2-5.5-5.5-2 5.5-2z"/></svg></span><div><b>PAL is adapting</b><span>Built from your weak topics</span></div></div></div>
+      <div class="fchip c4" style="--k:-160px;--dl:1.7s"><div class="fci"><span class="ic"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="7"/><path d="M10 6v4.2l2.8 1.8"/></svg></span><div><b>Base test · 0:14</b><span>Section A · Objective</span></div></div></div>
+      <div class="col l"><div class="phone tilt" data-fan="l" data-tilt-max="6"></div><div class="fdots"></div><div class="fcap"><b></b><span></span></div></div>
+      <div class="col m"><div class="phone tilt" data-fan="m" data-tilt-max="6"></div><div class="fdots"></div><div class="fcap"><b></b><span></span></div></div>
+      <div class="col r"><div class="phone tilt" data-fan="r" data-tilt-max="6"></div><div class="fdots"></div><div class="fcap"><b></b><span></span></div></div>
+    </div>
+    <div class="store-row">
+      <a class="btn btn-primary magnet" href="https://student.classmap.in/">Start assessment
+        <span class="arr"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GRADING ============ -->
+<section class="grading" id="grading">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow rv">Subjective answers, solved</span>
+      <h2 class="split" data-split>Write on paper. <em class="ac">Get graded by AI.</em></h2>
+      <p class="lead rv" style="--d:.15">For subjective questions there is nothing to type. Upload your handwritten answer sheets and ClassMap AI does the grading.</p>
+    </div>
+
+    <div class="gs" id="gs" data-phase="0">
+      <div class="gs-grid">
+        <!-- 1. paper -->
+        <div class="gs-item it-1">
+          <div class="gpaper">
+            <div class="gp-h"><span>Class 10 · Science</span><span>Answer sheet · Q5</span></div>
+            <div class="gp-img">
+              <div class="gp-clip"><img src="/student-page/assets/answer-sheet.jpg" alt="Handwritten answer about litmus paper" width="1280" height="738"></div>
+            </div>
+            <div class="gp-f"><i></i>Handwritten on paper</div>
+          </div>
+        </div>
+
+        <!-- 2. phone scanner -->
+        <div class="gs-item it-2 gs-phone">
+          <div class="phone">
+            <i class="pb pb1"></i><i class="pb pb2"></i><i class="pb pb3"></i>
+            <div class="glass">
+              <div class="isl"></div>
+              <div class="vf">
+                <div class="count-pg">PAGE 1 OF 1</div>
+                <div class="sheet">
+                  <img src="/student-page/assets/answer-sheet.jpg" alt="" width="1280" height="738">
+                  <div class="corners"><b></b><b></b><b></b><b></b></div>
+                  <div class="beam"></div>
+                  <i class="det d1" style="--k:0"></i><i class="det d2" style="--k:1"></i><i class="det d3" style="--k:2"></i>
+                </div>
+                <div class="up"><div class="t"><b>Uploading to ClassMap</b><span>1 page</span></div><div class="upb"><i></i></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. result -->
+        <div class="gs-item it-3">
+          <div class="gr-card">
+            <i class="gr-bar"></i>
+            <div class="gr-top"><span class="gr-doc"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2.500h7l3.500 3.500v11.500H5z"/><path d="M8 10h5M8 13.500h5"/></svg></span><b>Q5</b><span class="gr-score"><i class="n"></i>/2</span></div>
+            <div class="gr-cols">
+              <div class="gr-l"><small>YOUR ANSWER</small><div class="gr-im"><img src="/student-page/assets/answer-sheet.jpg" alt="" width="1280" height="738"><i class="det d1" style="--k:0"></i><i class="det d2" style="--k:1"></i><i class="det d3" style="--k:2"></i></div></div>
+              <div class="gr-r">
+                <div class="gr-fb"><small>FEEDBACK</small><p>You have correctly stated the colour changes litmus paper shows in both acidic and basic solutions.</p></div>
+                <div class="gr-marks">
+                  <div class="gr-m"><b>1/1</b><span>The student correctly stated: 'In acids -&gt; Blue litmus paper turns red.'</span></div>
+                  <div class="gr-m"><b>1/1</b><span>The student correctly stated: 'In bases -&gt; Red Litmus paper turns blue.'</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gs-steps" id="gsSteps">
+        <button class="gstep on" data-p="1"><span class="n">01</span><h3>Write on paper</h3><p>Answer by hand, the way you will in your exam.</p><i class="pr"></i></button>
+        <button class="gstep" data-p="2"><span class="n">02</span><h3>Upload your pages</h3><p>Photograph your sheets into the ClassMap portal.</p><i class="pr"></i></button>
+        <button class="gstep" data-p="3"><span class="n">03</span><h3>Get a detailed report</h3><p>ClassMap AI grades every answer and explains each mark.</p><i class="pr"></i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AUDIENCE ============ -->
+<section class="aud">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow rv">For the whole Boards journey</span>
+      <h2 class="split" data-split>Students prepare. Parents see. <em class="ac">Teachers know.</em></h2>
+    </div>
+
+    <div class="aud2 rv">
+      <div class="au-list" id="audList" role="tablist" aria-label="Who ClassMap is for">
+      <div class="ai on" role="tab" tabindex="0" data-i="0" aria-selected="true">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8l10-5 10 5-10 5z"/><path d="M6 10.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-5.5"/></svg></span>
+        <div class="au-tx"><small>Students</small><h3>Stop revising everything. Fix what’s broken.</h3>
+          <div class="au-more"><div><p>See exactly which parts of which topics need work, so every hour of revision counts.</p></div></div></div>
+        <i class="au-pr"></i>
+      </div>
+      <div class="ai" role="tab" tabindex="0" data-i="1" aria-selected="false">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.200-5.500 6.500-5.500s5.900 1.900 6.500 5.500"/><circle cx="17.500" cy="9.500" r="2.500"/><path d="M17 14.300c2.300.2 4 1.700 4.500 4.700"/></svg></span>
+        <div class="au-tx"><small>Parents</small><h3>Know where your child really stands.</h3>
+          <div class="au-more"><div><p>Readiness you can read at a glance — concept by concept, not just a number on a report card.</p></div></div></div>
+        <i class="au-pr"></i>
+      </div>
+      <div class="ai" role="tab" tabindex="0" data-i="2" aria-selected="false">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4M7 10l3 2.500 4-5 3 3"/></svg></span>
+        <div class="au-tx"><small>Teachers</small><h3>Turn practice into insight.</h3>
+          <div class="au-more"><div><p>Concept-level gaps replace guesswork about what to re-teach before the boards.</p><a class="lk" href="https://classmap.in/">ClassMap for schools <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div></div>
+        <i class="au-pr"></i>
+      </div>
+      </div>
+
+      <div class="au-stage" id="audStage">
+        <i class="au-orb"></i><i class="au-orb o2"></i>
+
+        <!-- students -->
+        <div class="ap on" data-i="0">
+          <div class="au-card">
+            <div class="au-h"><span class="au-t">Your fix list</span><span class="au-pill">Maths · Polynomials</span></div>
+            <div class="au-fx">
+          <div class="fx r" style="--i:0"><i class="dt"></i><span>Division algorithm</span><b>38%</b><div class="tr"><u style="--w:38%"></u></div></div>
+          <div class="fx r" style="--i:1"><i class="dt"></i><span>Cubic polynomials</span><b>24%</b><div class="tr"><u style="--w:24%"></u></div></div>
+          <div class="fx y" style="--i:2"><i class="dt"></i><span>Quadratic polynomials</span><b>55%</b><div class="tr"><u style="--w:55%"></u></div></div>
+          <div class="fx y" style="--i:3"><i class="dt"></i><span>Sum &amp; product of zeroes</span><b>64%</b><div class="tr"><u style="--w:64%"></u></div></div>
+          <div class="fx g" style="--i:4"><i class="dt"></i><span>Factorisation</span><b>84%</b><div class="tr"><u style="--w:84%"></u></div></div>
+            </div>
+            <div class="au-cta"><span><b>Fix first</b>Division algorithm</span><em>Start PAL test <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></em></div>
+          </div>
+          <div class="au-chip a" style="--dl:.6s"><span class="ic"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.500l2 5.500 5.500 2-5.500 2-2 5.500-2-5.500L2.500 9l5.500-2z"/></svg></span><div><b>Revision plan ready</b><span>2 topics to fix first</span></div></div>
+        </div>
+
+        <!-- parents -->
+        <div class="ap" data-i="1">
+          <div class="au-card">
+            <div class="au-h"><span class="au-who"><i>A</i><span><b>Aarav</b><small>Class 10 · CBSE</small></span></span><span class="au-pill ok">▲ 8 pts this week</span></div>
+            <div class="au-par">
+              <div class="au-ring"><svg viewBox="0 0 36 36"><circle class="bg" cx="18" cy="18" r="15.200"/><circle class="fg" cx="18" cy="18" r="15.200"/></svg><div><b></b><small>READY</small></div></div>
+              <div class="au-subs">
+            <div class="sb g" style="--i:0"><span>Maths</span><div class="tr"><u style="--w:74%"></u></div><b>74</b></div>
+            <div class="sb y" style="--i:1"><span>Science</span><div class="tr"><u style="--w:63%"></u></div><b>63</b></div>
+            <div class="sb y" style="--i:2"><span>Social Sci</span><div class="tr"><u style="--w:58%"></u></div><b>58</b></div>
+            <div class="sb g" style="--i:3"><span>English</span><div class="tr"><u style="--w:79%"></u></div><b>79</b></div>
+              </div>
+            </div>
+            <div class="au-spark"><svg viewBox="0 0 300 60" preserveAspectRatio="none"><defs><linearGradient id="auA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FF6321" stop-opacity=".28"/><stop offset="1" stop-color="#FF6321" stop-opacity="0"/></linearGradient></defs><path class="ar" d="M0 50 C30 48 40 38 70 40 S110 30 140 26 S190 22 220 14 S270 8 300 4 V60 H0Z"/><path class="ln" d="M0 50 C30 48 40 38 70 40 S110 30 140 26 S190 22 220 14 S270 8 300 4"/></svg><span>Readiness · last 5 weeks</span></div>
+          </div>
+          <div class="au-chip b" style="--dl:.7s"><span class="ic g"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round"><path d="M4.500 10.500l3.500 3.500 7.500-8"/></svg></span><div><b>Factorisation fixed</b><span>58% → 84%</span></div></div>
+        </div>
+
+        <!-- teachers -->
+        <div class="ap" data-i="2">
+          <div class="au-card">
+            <div class="au-h"><span class="au-t">Class 10-B · Science</span><span class="au-pill">38 students</span></div>
+            <div class="au-heat" id="auHeat"></div>
+            <div class="au-leg"><span><i class="g"></i>Strong</span><span><i class="y"></i>Revise</span><span><i class="r"></i>Fix first</span></div>
+            <div class="au-cta t"><span><b>Re-teach first</b>Triangles · 14 students in red</span><em>View class <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></em></div>
+          </div>
+          <div class="au-chip c" style="--dl:.8s"><span class="ic"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14l5-5 3 3 6-7M12 5h5v5"/></svg></span><div><b>Class average +11%</b><span>after 2 PAL rounds</span></div></div>
+        </div>
+        <span class="au-note">Sample data</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow rv">Pricing</span>
+      <h2 class="split" data-split>One simple price. <em class="ac">Four subjects.</em></h2>
+      <p class="lead rv" style="--d:.15">Everything you need for the Boards, in a single plan.</p>
+      <div class="sj-row rv" style="--d:.28" aria-label="Four subjects included"><span class="sj m" style="--i:0"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.900" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.500"/><path d="M8.500 7.500h7M8.500 12h.01M12 12h.01M15.500 12h.01M8.500 16h.01M12 16h.01M15.500 16h.01"/></svg></i>Mathematics</span><span class="sj s" style="--i:1"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.900" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L5 19a1.600 1.600 0 0 0 1.400 2.200h11.200A1.600 1.600 0 0 0 19 19l-5-10V3"/><path d="M7.600 15h8.800"/></svg></i>Science</span><span class="sj e" style="--i:2"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.900" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.500A1.500 1.500 0 0 1 6.500 3H19v15H6.500A1.500 1.500 0 0 0 5 19.500z"/><path d="M5 19.500A1.500 1.500 0 0 0 6.500 21H19M9 8h6M9 12h4"/></svg></i>English</span><span class="sj o" style="--i:3"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.900" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3.500 9h17M3.500 15h17M12 3c-3 3-3 15 0 18"/></svg></i>Social Science</span></div>
+    </div>
+
+    <div class="price-wrap">
+      <div class="beam rv"><div class="pcard applied" id="pc">
+        <div class="plan"><b>Class 10 Boards Plan</b><span>4 subjects</span></div>
+        <div class="px px-solo" id="px" aria-label="Class 10 Boards Plan: 1299 rupees for all four subjects">
+          <i class="px-glow"></i>
+          <div class="px-new">
+            <span class="px-cur">₹</span><span class="odo" data-v="1299" data-c="1"></span>
+          </div>
+          <i class="px-rule"></i>
+          <div class="px-for"><b>for all 4 subjects</b><span>Class 10 · CBSE Boards</span></div>
+        </div>
+        <a class="btn btn-primary magnet" href="https://student.classmap.in/">Start assessment
+          <span class="arr"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      </div></div>
+
+      <div class="inc rv" style="--d:.15">
+        <h4>Everything included</h4>
+        <ul>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg><span>Personal diagnostic engine &amp; Base Tests</span></li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg><span>AI grading of handwritten answers</span></li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg><span>Analysis reports after every round</span></li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg><span>PAL (Personal Adaptive Learning)</span></li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg><span>CBSE previous-year question papers</span></li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg><span>Objective and subjective questions</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="faq" id="faq">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow rv">Questions</span>
+      <h2 class="split" data-split>Good to <em class="ac">know.</em></h2>
+    </div>
+    <div class="faq-list" id="faqList">
+      <div class="qa"><button aria-expanded="false"><span>What is the diagnostic engine?</span><i class="pl"></i></button><div class="ans"><div><p>It tests every concept inside a topic, then marks each part green, yellow or red so you can see what’s strong and what needs work. Your next test is built around those weak parts.</p></div></div></div>
+      <div class="qa"><button aria-expanded="false"><span>What is PAL?</span><i class="pl"></i></button><div class="ans"><div><p>PAL stands for Personal Adaptive Learning. It’s the adaptive test that shapes itself around you. After it, you get an analysis report showing what improved, what’s still weak and what to study next — then the loop starts again.</p></div></div></div>
+      <div class="qa"><button aria-expanded="false"><span>Do I type my answers to subjective questions?</span><i class="pl"></i></button><div class="ans"><div><p>No. Write on paper the way you would in the exam, photograph your sheets into the ClassMap portal, and ClassMap AI grades every answer and explains each mark.</p></div></div></div>
+      <div class="qa"><button aria-expanded="false"><span>What do I get in the ₹1,299 plan?</span><i class="pl"></i></button><div class="ans"><div><p>Everything you need for your complete preparation. You get all four subjects: Mathematics, Science, English and Social Science, with the personal diagnostic engine, PAL tests, AI grading of handwritten answers and analysis reports after every round, plus CBSE previous-year question papers and both objective and subjective questions.</p></div></div></div>
+      <div class="qa"><button aria-expanded="false"><span>Where do I start?</span><i class="pl"></i></button><div class="ans"><div><p>Head to the <a href="https://student.classmap.in/">ClassMap student portal</a>, pick a subject and a topic, and take your first Base Test.</p></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="final">
+  <div class="wrap">
+    <div class="fbox">
+      <canvas id="contours2" aria-hidden="true"></canvas>
+      <img class="plane-b" src="/student-page/assets/logo-mark.png" alt="">
+      <img class="plane-b l" src="/student-page/assets/logo-mark.png" alt="">
+      <span class="eyebrow" style="color:#fff">Class 10 · CBSE Boards 2027</span>
+      <h2>Find your gaps before the Boards <em>find them.</em></h2>
+      <p>Take your first Base Test today. Let the engine show you exactly what to fix — then keep sharpening, round after round.</p>
+      <div class="cd" id="cd2"><div><b data-u="d">00</b><span>Days</span></div><div><b data-u="h">00</b><span>Hours</span></div><div><b data-u="m">00</b><span>Mins</span></div><div><b data-u="s">00</b><span>Secs</span></div></div>
+      <a class="btn btn-white magnet" href="https://student.classmap.in/">Start assessment
+        <span class="arr"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+
+
+<!-- mobile dock -->
+<div class="dock" id="dock">
+  <div><b>₹1,299</b><span>4 subjects · Class 10</span></div>
+  <a class="btn btn-primary btn-sm" href="https://student.classmap.in/">Start assessment
+    <span class="arr"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+</div>
